@@ -9,9 +9,9 @@ set(CMAKE_ASM_COMPILER      arm-none-eabi-as)
 
 add_executable(yaais-node main.cpp)
 
-SET(CMAKE_EXE_LINKER_FLAGS "-specs=nosys.specs")
+# necessary as _exit() is undefined
+target_link_libraries(yaais-node PRIVATE -specs=nosys.specs)
 
 target_compile_options(yaais-node PRIVATE -mcpu=cortex-m0)
 
 #-nostartfiles -ffreestanding -specs=nano.specs -fno-exceptions
-#target_link_libraries(yaais-node)
