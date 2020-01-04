@@ -1,6 +1,6 @@
 # Yet another automated irrigation system - client
 
-This readme describes the node software of YAAIS (add link to global readme here).
+This readme describes the node software of cosyfir (add link to global readme here).
 
 ## Required hardware and software
 
@@ -34,7 +34,7 @@ Find out where your usbserial device is mounted:
 
 And then do:
 
-    sudo stm32flash -w yaais-client /dev/ttyUSBx
+    sudo stm32flash -w cosyfir-node /dev/ttyUSBx
 
 ## Todo
 

@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
-project (yaaisd)
+project (cosyfird)
 
 find_package(Curses REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR})
 
-add_executable(yaaisd main.cpp)
-target_link_libraries(yaaisd ${CURSES_LIBRARIES})
+add_executable(cosyfird main.cpp)
+target_link_libraries(cosyfird ${CURSES_LIBRARIES})
