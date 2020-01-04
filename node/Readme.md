@@ -1,4 +1,4 @@
-# Yet another automated irrigation system - client
+# COntrol SYstem For IRigation node
 
 This readme describes the node software of cosyfir (add link to global readme here).
 
@@ -16,6 +16,7 @@ This readme describes the node software of cosyfir (add link to global readme he
 ## How to build
 
     mkdir build
+    cd build
     cmake ..
     make
 
