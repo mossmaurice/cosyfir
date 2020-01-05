@@ -24,6 +24,7 @@ cd node
 mkdir -p build
 cd build
 cmake ..
+#cmake -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" ..
 make -j8
 cd $WORKSPACE
 

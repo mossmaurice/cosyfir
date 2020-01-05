@@ -70,3 +70,4 @@ And then do:
 * Add CMake flag for support of different sensors (e.g. temperature, soil moisture)
 * Add LoRa stack as submodule
   * Add variable in CMake for TTN credentials?
+* Do we need NvmCtxMgmt.c?
