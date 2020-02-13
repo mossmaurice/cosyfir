@@ -32,8 +32,12 @@ For a clean build add the parameter "clean" instead of "test".
 
 Currently two applications are available:
 
-* cosyfird: Receives message from your nodes via the TTN server
-* cosyfir-pub: Publish messages to your nodes
+* cosyfir-sub: Receives messages from nodes via the TTN server
+* cosyfir-pub: Publishes messages to nodes
+
+[libmosquittopp](https://mosquitto.org/) is used as MQTT library.
+
+    sudo apt install libmosquittopp-dev libssl-dev
 
 ## Node
 
