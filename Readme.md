@@ -50,6 +50,10 @@ This section describes the node software which communicates based on [LoRa](http
 * Linux machine
   * [stm32flash](https://sourceforge.net/p/stm32flash/wiki/Home/) version  >=0.5
 
+stm32flash should be available with most distros, e.g. for Debian do:
+
+    sudo apt install stm32flash
+
 ### How to flash
 
 Connected as described below:
@@ -62,9 +66,16 @@ Find out where your usbserial device is mounted:
 
     journalctl -k -n 100
 
-And then do:
+And then from root, do:
 
-    sudo stm32flash -w cosyfir-node /dev/ttyUSBx
+    sudo stm32flash -w node/build/cosyfir-node /dev/ttyUSBx
+
+#### Debugging (optional)
+
+    sudo apt install stmlink-tools
+    st-flash
+    st-info
+    st-utils
 
 ### What to configure in order to connect to [The Things Network](https://www.thethingsnetwork.org/)
 
