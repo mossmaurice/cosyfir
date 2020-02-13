@@ -6,4 +6,4 @@ find_library(mosquittopp REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR})
 
 add_executable(cosyfir-sub source/cosyfir-sub/main.cpp)
-target_link_libraries(cosyfir-sub ${CURSES_LIBRARIES} ${MOSQUITTOPP_LIBRARIES})
+target_link_libraries(cosyfir-sub ${CURSES_LIBRARIES} mosquittopp)

@@ -37,7 +37,7 @@ Currently two applications are available:
 
 [libmosquittopp](https://mosquitto.org/) is used as MQTT library.
 
-    sudo apt install libmosquittopp-dev libssl-dev
+    sudo apt install libmosquittopp-dev libssl-dev libyaml-cpp-dev
 
 ## Node
 
