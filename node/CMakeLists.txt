@@ -16,7 +16,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/mac)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/peripherals)
 
 # Add custom app
-add_executable(cosyfir-node main.cpp
+add_executable(cosyfir-node main.c #main.cpp
+                            LoRaMac-node/src/apps/LoRaMac/common/NvmCtxMgmt.c
                             $<TARGET_OBJECTS:mac>
                             $<TARGET_OBJECTS:system>
                             $<TARGET_OBJECTS:radio>
