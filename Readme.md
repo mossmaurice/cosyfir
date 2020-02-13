@@ -1,4 +1,4 @@
-# COntrol SYstem For IRigation
+# **CO**ntrol **SY**stem **F**or **IR**igation
 
 Cosyfir helps you watering your plants. The node software runs on an STM32 ARM Cortex microcontroller. The server software runs on UNIX-based system like Debian. The following picture depicts an example setup:
 
@@ -8,7 +8,7 @@ Cosyfir helps you watering your plants. The node software runs on an STM32 ARM C
 
     Sensor    LoRaWAN     TTN          RPi        User
      Node     Gateway    Server       @home
-             (Not part of cosyfir)
+    ./node/* (Not part of cosyfir)  ./cosyfird/*
 
 This readme describes both the server (e.g. Raspberry Pi) and the sensor node software in the following sections.
 
@@ -28,9 +28,12 @@ If you want to run the tests after the build add "test".
 
 For a clean build add the parameter "clean" instead of "test".
 
-## Server
+## cosyfir daemon
 
-tbd
+Currently two applications are available:
+
+* cosyfird: Receives message from your nodes via the TTN server
+* cosyfir-pub: Publish messages to your nodes
 
 ## Node
 
