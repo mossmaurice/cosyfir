@@ -15,6 +15,7 @@ MqttClient::~MqttClient()
 {
     if (mosqpp::lib_cleanup() != MOSQ_ERR_SUCCESS)
     {
+        printw("There was problem with cleaning up mosquittopp!\n");
         std::terminate();
     }
 }
