@@ -8,6 +8,7 @@ Cosyfir helps you watering your plants. The node software runs on an STM32 ARM C
 
     Sensor    LoRaWAN     TTN          RPi        User
      Node     Gateway    Server       @home
+
     ./node/* (Not part of cosyfir)  ./cosyfird/*
 
 This readme describes both the server (e.g. Raspberry Pi) and the sensor node software in the following sections.
@@ -30,14 +31,20 @@ For a clean build add the parameter "clean" instead of "test".
 
 ## cosyfir daemon
 
-Currently two applications are available:
+### Required hardware and software
 
-* cosyfir-sub: Receives messages from nodes via the TTN server
-* cosyfir-pub: Publishes messages to nodes
+* Computer running UNIX-like OS e.g. Raspberry Pi with Raspbian
 
 [libmosquittopp](https://mosquitto.org/) is used as MQTT library.
 
     sudo apt install libmosquittopp-dev libssl-dev libyaml-cpp-dev
+
+C++17 compiler is required. GCC 8.3.0 is recommended.
+
+Currently two applications are available:
+
+* cosyfir-sub: Receives messages from nodes via the TTN server
+* cosyfir-pub: Publishes messages to nodes
 
 ## Node
 
@@ -45,13 +52,13 @@ This section describes the node software which communicates based on [LoRa](http
 
 ### Required hardware and software
 
-* [LSN50 v1.2](https://wiki.dragino.com/index.php?title=Lora_Sensor_Node-LSN50) from Dragino
+* [LSN50 v1.2](http://www.dragino.com/products/lora-lorawan-end-node/item/128-lsn50.html) from Dragino (I bought it [here](https://www.exp-tech.de/plattformen/internet-of-things-iot/8377/dragino-lsn50-868-12-waterproof-long-range-wireless-lora-sensor-node))
   * STM32L072CZT6
   * Semtech SX1276
   * Battery
   * IP66 case
 * FTDI UART cable
-* Linux machine
+* UNIX machine
   * [stm32flash](https://sourceforge.net/p/stm32flash/wiki/Home/) version  >=0.5
 
 stm32flash should be available with most distros, e.g. for Debian do:
