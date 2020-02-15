@@ -1,4 +1,5 @@
 #include "network/mqttclient.hpp"
+#include "cosyfir-sub/configparser.hpp"
 
 #include <chrono>
 #include <exception>
@@ -11,22 +12,21 @@ int main()
 {
     using namespace std::chrono_literals;
 
+    constexpr char yamlFile[] = "cosyfird.yaml";
+
     initscr();
+    printw("Reading %s..\n", yamlFile);
+
+    ConfigParser mqttSettings{yamlFile};
+
     printw("Connecting to TTN server..\n");
     refresh();
-
-    constexpr char CLIENT_ID[] = "foo";
-    constexpr char HOST_ADDR[] = "eu.thethings.network";
-    constexpr uint16_t PORT = 8883;
-    constexpr char PASSWD[] = "bar";
-    /// @note TTN is using Let's Encrypt, let's hardcode their root cert for the
-    /// time being
-    constexpr char PEM_FILE[] = "/etc/ssl/certs/DST_Root_CA_X3.pem";
 
     /// @todo wrap this in an std::optional
     MqttClient client;
 
-    if (client.username_pw_set(CLIENT_ID, PASSWD) != MOSQ_ERR_SUCCESS)
+    /// @todo move the following four calls to c'tor of MqttClient
+    if (client.username_pw_set(mqttSettings.getClientId().c_str(), mqttSettings.getPassword().c_str()) != MOSQ_ERR_SUCCESS)
     {
         printw("Could not connect!\n");
         refresh();
@@ -39,8 +39,7 @@ int main()
         refresh();
     }
 
-    // Connect to TTN server
-    if (client.connect(HOST_ADDR, PORT) != MOSQ_ERR_SUCCESS)
+    if (client.connect(mqttSettings.getHostAddress().c_str(), mqttSettings.getPort()) != MOSQ_ERR_SUCCESS)
     {
         printw("Could not connect!\n");
         refresh();
