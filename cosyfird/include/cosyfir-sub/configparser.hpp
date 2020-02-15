@@ -10,10 +10,10 @@ class ConfigParser
 
     virtual ~ConfigParser() = default;
 
-    ConfigParser(const ConfigParser &) = delete;
-    ConfigParser(ConfigParser &&) = delete;
-    ConfigParser &operator=(const ConfigParser &) = delete;
-    ConfigParser &operator=(ConfigParser &&) = delete;
+    ConfigParser(const ConfigParser&) = delete;
+    ConfigParser(ConfigParser&&) = delete;
+    ConfigParser& operator=(const ConfigParser&) = delete;
+    ConfigParser& operator=(ConfigParser&&) = delete;
 
     const std::string getHostAddress() const;
     const uint16_t getPort() const;

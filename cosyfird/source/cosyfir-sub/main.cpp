@@ -1,5 +1,5 @@
-#include "network/mqttclient.hpp"
 #include "cosyfir-sub/configparser.hpp"
+#include "network/mqttclient.hpp"
 
 #include <chrono>
 #include <exception>
@@ -23,33 +23,10 @@ int main()
     refresh();
 
     /// @todo wrap this in an std::optional
-    MqttClient client;
-
-    /// @todo move the following four calls to c'tor of MqttClient
-    if (client.username_pw_set(mqttSettings.getClientId().c_str(), mqttSettings.getPassword().c_str()) != MOSQ_ERR_SUCCESS)
-    {
-        printw("Could not connect!\n");
-        refresh();
-    }
-
-    if (client.tls_set(PEM_FILE, nullptr, nullptr, nullptr, nullptr)
-        != MOSQ_ERR_SUCCESS)
-    {
-        printw("Could not set TLS parameters!\n");
-        refresh();
-    }
-
-    if (client.connect(mqttSettings.getHostAddress().c_str(), mqttSettings.getPort()) != MOSQ_ERR_SUCCESS)
-    {
-        printw("Could not connect!\n");
-        refresh();
-    }
-
-    if (client.subscribe(nullptr, "+/devices/+/up", 0) != MOSQ_ERR_SUCCESS)
-    {
-        printw("Could not subscribe!\n");
-        refresh();
-    }
+    MqttClient client{mqttSettings.getHostAddress(),
+                      mqttSettings.getPort(),
+                      mqttSettings.getClientId(),
+                      mqttSettings.getPassword()};
 
     while (1)
     {
