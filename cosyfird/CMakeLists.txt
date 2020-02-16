@@ -8,4 +8,4 @@ include_directories(${CURSES_INCLUDE_DIR} "include/")
 add_executable(cosyfir-sub  source/cosyfir-sub/main.cpp
                             source/cosyfir-sub/configparser.cpp
                             source/network/mqttclient.cpp)
-target_link_libraries(cosyfir-sub ${CURSES_LIBRARIES} mosquittopp yaml-cpp)
+target_link_libraries(cosyfir-sub ${CURSES_LIBRARIES} mosquittopp yaml-cpp jsoncpp b64)

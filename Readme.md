@@ -37,7 +37,7 @@ For a clean build add the parameter "clean" instead of "test".
 
 [libmosquittopp](https://mosquitto.org/) is used as MQTT library.
 
-    sudo apt install libmosquittopp-dev libssl-dev libyaml-cpp-dev
+    sudo apt install libmosquittopp-dev libssl-dev libyaml-cpp-dev libjsoncpp-dev libb64-dev
 
 C++17 compiler is required. GCC 8.3.0 is recommended.
 
