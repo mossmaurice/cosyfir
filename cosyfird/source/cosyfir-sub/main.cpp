@@ -1,24 +1,37 @@
 #include "cosyfir-sub/configparser.hpp"
 #include "network/mqttclient.hpp"
+#include "tui/tuiapp.hpp"
+#include "tui/window.hpp"
 
 #include <chrono>
 #include <exception>
-/// @todo Try ncurses c++ https://reversed.top/2016-04-24/ncurses-for-cpp/
 #include <cursesapp.h>
 #include <optional>
 #include <thread>
 
+using namespace csf;
+
 int main()
 {
     using namespace std::chrono_literals;
-
     constexpr char yamlFile[] = "cosyfird.yaml";
 
-    initscr();
-    printw("Reading %s..\n", yamlFile);
+    // Create container class for TUI
+    tui::App cosyfirdApp;
 
+    // Create left window
+    tui::Window statusWindow;
+
+    // Create right window
+    tui::Window messageWindow;
+
+    initscr();
+
+    // Print to left window
+    printw("Reading %s..\n", yamlFile);
     ConfigParser mqttSettings{yamlFile};
 
+    // Print to left window
     printw("Connecting to TTN server..\n");
     refresh();
 
@@ -28,6 +41,7 @@ int main()
                       mqttSettings.getClientId(),
                       mqttSettings.getPassword()};
 
+    /// @todo while(getchar("q"))
     while (1)
     {
         if (client.loop() != MOSQ_ERR_SUCCESS)
@@ -42,9 +56,6 @@ int main()
         }
         std::this_thread::sleep_for(100ms);
     }
-
-    getch();
-    endwin();
 
     return 0;
 }

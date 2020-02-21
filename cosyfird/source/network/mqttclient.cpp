@@ -19,6 +19,7 @@ MqttClient::MqttClient(const std::string& hostAddress,
 
     if (username_pw_set(clientId.c_str(), password.c_str()) != MOSQ_ERR_SUCCESS)
     {
+        // Print to left window
         printw("Could not connect!\n");
         refresh();
     }
@@ -26,18 +27,21 @@ MqttClient::MqttClient(const std::string& hostAddress,
     if (tls_set(PEM_FILE, nullptr, nullptr, nullptr, nullptr)
         != MOSQ_ERR_SUCCESS)
     {
+        // Print to left window
         printw("Could not set TLS parameters!\n");
         refresh();
     }
 
     if (connect(hostAddress.c_str(), port) != MOSQ_ERR_SUCCESS)
     {
+        // Print to left window
         printw("Could not connect!\n");
         refresh();
     }
 
     if (subscribe(nullptr, "+/devices/+/up", 0) != MOSQ_ERR_SUCCESS)
     {
+        // Print to left window
         printw("Could not subscribe!\n");
         refresh();
     }
@@ -59,6 +63,7 @@ MqttClient::~MqttClient()
 {
     if (mosqpp::lib_cleanup() != MOSQ_ERR_SUCCESS)
     {
+        // Print to left window
         printw("There was problem with cleaning up mosquittopp!\n");
         std::terminate();
     }
@@ -68,6 +73,7 @@ void MqttClient::on_message(const struct mosquitto_message* message)
 {
     if (message)
     {
+        // Print to left window
         printw("New message arrived!\n");
 
         const std::string topic{message->topic};
@@ -94,6 +100,7 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         base64Decoder.decode(
             payloadBase64.c_str(), payloadBase64.length(), decodedPayload);
 
+        // Print to right window
         std::cout << "sensorInstance: " << jsonRoot["dev_id"].asString() << endl;
         std::cout << "devEui: " << jsonRoot["hardware_serial"].asString() << endl;
         std::cout << "frameCounter: " << jsonRoot["counter"].asUInt() << endl;

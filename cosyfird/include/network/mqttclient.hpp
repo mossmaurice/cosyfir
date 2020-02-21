@@ -15,7 +15,7 @@ class MqttClient : public mosqpp::mosquittopp
                const std::string& clientId,
                const std::string& password);
 
-    ~MqttClient();
+    virtual ~MqttClient();
 
     MqttClient(const MqttClient&) = delete;
     MqttClient(MqttClient&&) = delete;
