@@ -2,7 +2,8 @@
 
 #include <string>
 #include <yaml-cpp/yaml.h>
-
+namespace csf
+{
 class ConfigParser
 {
   public:
@@ -23,3 +24,4 @@ class ConfigParser
   private:
     YAML::Node m_config;
 };
+} // namespace csf

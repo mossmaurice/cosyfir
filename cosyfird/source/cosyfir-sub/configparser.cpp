@@ -2,6 +2,9 @@
 
 #include <yaml-cpp/yaml.h>
 
+namespace csf
+{
+
 ConfigParser::ConfigParser(std::string yamlFile)
 {
     m_config = YAML::LoadFile(yamlFile);
@@ -26,3 +29,4 @@ const std::string ConfigParser::getPassword() const
 {
     return m_config["MqttConfig"]["Password"].as<std::string>();
 }
+} // namespace csf

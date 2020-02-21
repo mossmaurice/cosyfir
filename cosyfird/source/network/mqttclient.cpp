@@ -6,6 +6,10 @@
 #include <jsoncpp/json/json.h>
 #include <memory>
 
+namespace csf
+{
+namespace network
+{
 MqttClient::MqttClient(const std::string& hostAddress,
                        const uint16_t& port,
                        const std::string& clientId,
@@ -101,8 +105,10 @@ void MqttClient::on_message(const struct mosquitto_message* message)
             payloadBase64.c_str(), payloadBase64.length(), decodedPayload);
 
         // Print to right window
-        std::cout << "sensorInstance: " << jsonRoot["dev_id"].asString() << endl;
-        std::cout << "devEui: " << jsonRoot["hardware_serial"].asString() << endl;
+        std::cout << "sensorInstance: " << jsonRoot["dev_id"].asString()
+                  << endl;
+        std::cout << "devEui: " << jsonRoot["hardware_serial"].asString()
+                  << endl;
         std::cout << "frameCounter: " << jsonRoot["counter"].asUInt() << endl;
         for (auto byte : decodedPayload)
         {
@@ -112,3 +118,5 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         refresh();
     }
 }
+} // namespace network
+} // namespace csf

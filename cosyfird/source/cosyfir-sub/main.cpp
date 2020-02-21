@@ -4,8 +4,8 @@
 #include "tui/window.hpp"
 
 #include <chrono>
-#include <exception>
 #include <cursesapp.h>
+#include <exception>
 #include <optional>
 #include <thread>
 
@@ -36,10 +36,10 @@ int main()
     refresh();
 
     /// @todo wrap this in an std::optional
-    MqttClient client{mqttSettings.getHostAddress(),
-                      mqttSettings.getPort(),
-                      mqttSettings.getClientId(),
-                      mqttSettings.getPassword()};
+    network::MqttClient client{mqttSettings.getHostAddress(),
+                               mqttSettings.getPort(),
+                               mqttSettings.getClientId(),
+                               mqttSettings.getPassword()};
 
     /// @todo while(getchar("q"))
     while (1)
@@ -57,5 +57,5 @@ int main()
         std::this_thread::sleep_for(100ms);
     }
 
-    return 0;
+    return cosyfirdApp.run();
 }

@@ -1,4 +1,5 @@
 #include "tui/tuiapp.hpp"
+
 namespace csf
 {
 namespace tui
@@ -7,10 +8,7 @@ App::App() : NCursesApplication(true) {}
 
 App::~App() { endwin(); }
 
-int App::run()
-{
-
-}
+int App::run() { return 0; }
 
 void App::addTitle()
 {

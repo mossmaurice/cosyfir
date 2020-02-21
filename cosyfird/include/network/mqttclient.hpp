@@ -7,6 +7,10 @@
 /// time being
 constexpr char PEM_FILE[] = "/etc/ssl/certs/DST_Root_CA_X3.pem";
 
+namespace csf
+{
+namespace network
+{
 class MqttClient : public mosqpp::mosquittopp
 {
   public:
@@ -24,3 +28,5 @@ class MqttClient : public mosqpp::mosquittopp
 
     void on_message(const struct mosquitto_message* message) override;
 };
+} // namespace network
+} // namespace csf
