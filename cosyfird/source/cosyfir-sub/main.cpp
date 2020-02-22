@@ -20,39 +20,39 @@ int main()
     tui::App cosyfirdApp;
 
     // Create left window
-    tui::Window statusWindow;
+    tui::Window statusWindow{70, 50, 3, 5};
 
-    // Create right window
-    tui::Window messageWindow;
+    // Create right window with full MQTT message
+    tui::Window messageWindow{70, 50, 10, 60};
 
-    initscr();
+    // Create window for LoRa payload
+    tui::Window payloadWindow{20, 50, 3, 60};
 
     // Print to left window
-    printw("Reading %s..\n", yamlFile);
+    statusWindow.stream() << "Reading " << yamlFile << "..";
     ConfigParser mqttSettings{yamlFile};
 
     // Print to left window
-    printw("Connecting to TTN server..\n");
-    refresh();
+    statusWindow.stream() << "Connecting to TTN server..";
 
     /// @todo wrap this in an std::optional
     network::MqttClient client{mqttSettings.getHostAddress(),
                                mqttSettings.getPort(),
                                mqttSettings.getClientId(),
-                               mqttSettings.getPassword()};
+                               mqttSettings.getPassword(),
+                               statusWindow,
+                               messageWindow};
 
     /// @todo while(getchar("q"))
     while (1)
     {
         if (client.loop() != MOSQ_ERR_SUCCESS)
         {
-            printw("Could not loop!\n");
-            refresh();
+            statusWindow.stream() << "Could not loop!";
         }
         else
         {
-            printw("Loop!\n");
-            refresh();
+            statusWindow.stream() << "Loop!";
         }
         std::this_thread::sleep_for(100ms);
     }

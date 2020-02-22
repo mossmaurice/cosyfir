@@ -13,7 +13,10 @@ namespace network
 MqttClient::MqttClient(const std::string& hostAddress,
                        const uint16_t& port,
                        const std::string& clientId,
-                       const std::string& password)
+                       const std::string& password,
+                       tui::Window& statusWindow,
+                       tui::Window& messageWindow)
+    : m_statusWindow(statusWindow), m_messageWindow(messageWindow)
 {
     if (mosqpp::lib_init() != mosq_err_t::MOSQ_ERR_SUCCESS)
     {
@@ -23,31 +26,23 @@ MqttClient::MqttClient(const std::string& hostAddress,
 
     if (username_pw_set(clientId.c_str(), password.c_str()) != MOSQ_ERR_SUCCESS)
     {
-        // Print to left window
-        printw("Could not connect!\n");
-        refresh();
+        m_statusWindow.stream() << "Could not connect!";
     }
 
     if (tls_set(PEM_FILE, nullptr, nullptr, nullptr, nullptr)
         != MOSQ_ERR_SUCCESS)
     {
-        // Print to left window
-        printw("Could not set TLS parameters!\n");
-        refresh();
+        m_statusWindow.stream() << "Could not set TLS parameters!";
     }
 
     if (connect(hostAddress.c_str(), port) != MOSQ_ERR_SUCCESS)
     {
-        // Print to left window
-        printw("Could not connect!\n");
-        refresh();
+        m_statusWindow.stream() << "Could not connect!";
     }
 
     if (subscribe(nullptr, "+/devices/+/up", 0) != MOSQ_ERR_SUCCESS)
     {
-        // Print to left window
-        printw("Could not subscribe!\n");
-        refresh();
+        m_statusWindow.stream() << "Could not subscribe!";
     }
 
     /// @todo subscribe to all topics
@@ -67,8 +62,8 @@ MqttClient::~MqttClient()
 {
     if (mosqpp::lib_cleanup() != MOSQ_ERR_SUCCESS)
     {
-        // Print to left window
-        printw("There was problem with cleaning up mosquittopp!\n");
+        m_statusWindow.stream()
+            << "There was problem with cleaning up mosquittopp!";
         std::terminate();
     }
 }
@@ -77,8 +72,7 @@ void MqttClient::on_message(const struct mosquitto_message* message)
 {
     if (message)
     {
-        // Print to left window
-        printw("New message arrived!\n");
+        m_statusWindow.stream() << "New message arrived!";
 
         const std::string topic{message->topic};
         const std::string payloadJson{static_cast<char*>(message->payload)};
@@ -104,8 +98,9 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         base64Decoder.decode(
             payloadBase64.c_str(), payloadBase64.length(), decodedPayload);
 
-        // Print to right window
-        std::cout << "sensorInstance: " << jsonRoot["dev_id"].asString()
+        m_messageWindow.stream() << "Test message";
+
+        /*std::cout << "sensorInstance: " << jsonRoot["dev_id"].asString()
                   << endl;
         std::cout << "devEui: " << jsonRoot["hardware_serial"].asString()
                   << endl;
@@ -113,9 +108,7 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         for (auto byte : decodedPayload)
         {
             printf("payload (hex): %02x", decodedPayload[byte]);
-        }
-
-        refresh();
+        }*/
     }
 }
 } // namespace network

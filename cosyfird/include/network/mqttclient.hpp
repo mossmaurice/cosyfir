@@ -1,5 +1,7 @@
 #pragma once
 
+#include "tui/window.hpp"
+
 #include <mosquittopp.h>
 #include <string>
 
@@ -17,7 +19,9 @@ class MqttClient : public mosqpp::mosquittopp
     MqttClient(const std::string& hostAddress,
                const uint16_t& port,
                const std::string& clientId,
-               const std::string& password);
+               const std::string& password,
+               tui::Window& statusWindow,
+               tui::Window& messageWindow);
 
     virtual ~MqttClient();
 
@@ -27,6 +31,9 @@ class MqttClient : public mosqpp::mosquittopp
     MqttClient& operator=(MqttClient&&) = delete;
 
     void on_message(const struct mosquitto_message* message) override;
+
+    tui::Window& m_statusWindow;
+    tui::Window& m_messageWindow;
 };
 } // namespace network
 } // namespace csf

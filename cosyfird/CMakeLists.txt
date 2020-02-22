@@ -9,6 +9,7 @@ add_executable(cosyfir-sub  source/cosyfir-sub/main.cpp
                             source/cosyfir-sub/configparser.cpp
                             source/network/mqttclient.cpp
                             source/tui/tuiapp.cpp
-                            source/tui/window.cpp)
+                            source/tui/window.cpp
+                            source/tui/stream.cpp)
 
 target_link_libraries(cosyfir-sub ${CURSES_LIBRARIES} ncurses++ mosquittopp yaml-cpp jsoncpp b64)
