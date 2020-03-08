@@ -21,7 +21,7 @@ class Window : public NCursesWindow
     Window& operator=(const Window&) = delete;
     Window& operator=(Window&&) = delete;
 
-    Stream stream();
+    Stream print();
 };
 } // namespace tui
 } // namespace csf

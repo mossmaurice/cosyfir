@@ -11,7 +11,7 @@ Window::Window(int lines, int cols, int beginX, int beginY)
     box();
 }
 
-Stream Window::stream() { return Stream(*this); }
+Stream Window::print() { return Stream(*this); }
 
 } // namespace tui
 } // namespace csf

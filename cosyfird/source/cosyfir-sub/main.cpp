@@ -29,11 +29,11 @@ int main()
     tui::Window payloadWindow{20, 50, 3, 60};
 
     // Print to left window
-    statusWindow.stream() << "Reading " << yamlFile << "..";
+    statusWindow.print() << "Reading " << yamlFile << "..";
     ConfigParser mqttSettings{yamlFile};
 
     // Print to left window
-    statusWindow.stream() << "Connecting to TTN server..";
+    statusWindow.print() << "Connecting to TTN server..";
 
     /// @todo wrap this in an std::optional
     network::MqttClient client{mqttSettings.getHostAddress(),
@@ -43,16 +43,15 @@ int main()
                                statusWindow,
                                messageWindow};
 
-    /// @todo while(getchar("q"))
-    while (1)
+    while (statusWindow.getch() != 'q')
     {
         if (client.loop() != MOSQ_ERR_SUCCESS)
         {
-            statusWindow.stream() << "Could not loop!";
+            statusWindow.print() << "Could not loop!";
         }
         else
         {
-            statusWindow.stream() << "Loop!";
+            statusWindow.print() << "Loop!";
         }
         std::this_thread::sleep_for(100ms);
     }

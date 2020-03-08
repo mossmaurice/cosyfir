@@ -26,23 +26,23 @@ MqttClient::MqttClient(const std::string& hostAddress,
 
     if (username_pw_set(clientId.c_str(), password.c_str()) != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.stream() << "Could not connect!";
+        m_statusWindow.print() << "Could not connect!";
     }
 
     if (tls_set(PEM_FILE, nullptr, nullptr, nullptr, nullptr)
         != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.stream() << "Could not set TLS parameters!";
+        m_statusWindow.print() << "Could not set TLS parameters!";
     }
 
     if (connect(hostAddress.c_str(), port) != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.stream() << "Could not connect!";
+        m_statusWindow.print() << "Could not connect!";
     }
 
     if (subscribe(nullptr, "+/devices/+/up", 0) != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.stream() << "Could not subscribe!";
+        m_statusWindow.print() << "Could not subscribe!";
     }
 
     /// @todo subscribe to all topics
@@ -62,7 +62,7 @@ MqttClient::~MqttClient()
 {
     if (mosqpp::lib_cleanup() != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.stream()
+        m_statusWindow.print()
             << "There was problem with cleaning up mosquittopp!";
         std::terminate();
     }
@@ -72,7 +72,7 @@ void MqttClient::on_message(const struct mosquitto_message* message)
 {
     if (message)
     {
-        m_statusWindow.stream() << "New message arrived!";
+        m_statusWindow.print() << "New message arrived!";
 
         const std::string topic{message->topic};
         const std::string payloadJson{static_cast<char*>(message->payload)};
@@ -98,7 +98,7 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         base64Decoder.decode(
             payloadBase64.c_str(), payloadBase64.length(), decodedPayload);
 
-        m_messageWindow.stream() << "Test message";
+        m_messageWindow.print() << "Test message";
 
         /*std::cout << "sensorInstance: " << jsonRoot["dev_id"].asString()
                   << endl;
