@@ -20,13 +20,14 @@ int main()
     tui::App cosyfirdApp;
 
     // Create left window
-    tui::Window statusWindow{70, 50, 3, 5};
-
-    // Create right window with full MQTT message
-    tui::Window messageWindow{70, 50, 10, 60};
+    tui::Window statusWindow{" Log ", 30, 60, 3, 5};
 
     // Create window for LoRa payload
-    tui::Window payloadWindow{20, 50, 3, 60};
+    tui::Window payloadWindow{
+        " Payload (hex) ", 10, 50, 3, 70}; // @todo mabye tui::HexWindow?
+
+    // Create right window with full MQTT message
+    tui::Window messageWindow{" Full MQTT message ", 18, 50, 15, 70};
 
     // Print to left window
     statusWindow.print() << "Reading " << yamlFile << "..";
@@ -45,7 +46,8 @@ int main()
 
     while (statusWindow.getch() != 'q')
     {
-        if (client.loop() != MOSQ_ERR_SUCCESS)
+        if (client.loop()
+            != MOSQ_ERR_SUCCESS) // @todo maybe put this to a thread
         {
             statusWindow.print() << "Could not loop!";
         }

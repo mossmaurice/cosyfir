@@ -11,10 +11,10 @@ namespace tui
 
 class Stream;
 
-class Window : public NCursesWindow
+class Window : public NCursesColorWindow
 {
   public:
-    Window(int lines, int cols, int beginX, int beginY);
+    Window(std::string title, int lines, int cols, int beginX, int beginY);
     virtual ~Window() = default;
     Window(const Window&) = delete;
     Window(Window&&) = delete;
@@ -22,6 +22,14 @@ class Window : public NCursesWindow
     Window& operator=(Window&&) = delete;
 
     Stream print();
+    /// @todo
+    // HexStream displayHex();
+    // Stream showMessage();
+
+    void printBorder();
+
+  private:
+    std::string m_title;
 };
 } // namespace tui
 } // namespace csf

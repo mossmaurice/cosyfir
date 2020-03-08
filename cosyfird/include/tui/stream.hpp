@@ -34,7 +34,7 @@ class Stream
     using SysClock = std::chrono::system_clock;
     using TimePoint = std::chrono::time_point<SysClock>;
 
-    TimePoint m_timepoint;
+    TimePoint m_timePoint{SysClock::now()};
     std::string m_message;
 };
 } // namespace tui
