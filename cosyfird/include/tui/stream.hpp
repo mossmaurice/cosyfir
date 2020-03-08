@@ -23,10 +23,10 @@ class Stream
     Stream& operator=(const Stream&) = default;
     Stream& operator=(Stream&&) = default;
 
-    Stream operator<<(const char* value);
+    Stream& operator<<(const char* value);
 
     template <typename T>
-    Stream operator<<(const T& value);
+    Stream& operator<<(const T& value);
 
   private:
     Window& m_window;

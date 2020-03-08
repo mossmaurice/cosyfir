@@ -14,14 +14,14 @@ Stream::~Stream()
     m_window.refresh();
 }
 
-Stream Stream::operator<<(const char* value)
+Stream& Stream::operator<<(const char* value)
 {
     m_message.append(value);
     return *this;
 }
 
 template <typename T>
-Stream Stream::operator<<(const T& value)
+Stream& Stream::operator<<(const T& value)
 {
     /// @todo std::bitset
     m_message.append(std::to_string(value));
