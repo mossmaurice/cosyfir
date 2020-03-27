@@ -4,7 +4,10 @@ namespace csf
 {
 namespace tui
 {
-App::App() : NCursesApplication(true) {}
+App::App()
+    : NCursesApplication(true)
+{
+}
 
 App::~App() { endwin(); }
 

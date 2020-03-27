@@ -15,8 +15,11 @@ MqttClient::MqttClient(const std::string& hostAddress,
                        const std::string& clientId,
                        const std::string& password,
                        tui::Window& statusWindow,
-                       tui::Window& messageWindow)
-    : m_statusWindow(statusWindow), m_messageWindow(messageWindow)
+                       tui::Window& messageWindow,
+                       tui::Window& payloadWindow)
+    : m_statusWindow(statusWindow)
+    , m_messageWindow(messageWindow)
+    , m_payloadWindow(payloadWindow)
 {
     if (mosqpp::lib_init() != mosq_err_t::MOSQ_ERR_SUCCESS)
     {
@@ -26,23 +29,25 @@ MqttClient::MqttClient(const std::string& hostAddress,
 
     if (username_pw_set(clientId.c_str(), password.c_str()) != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.print() << "Could not connect!";
+        m_statusWindow.printLine() << "Could not connect";
     }
 
     if (tls_set(PEM_FILE, nullptr, nullptr, nullptr, nullptr)
         != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.print() << "Could not set TLS parameters!";
+        m_statusWindow.printLine() << "Could not set TLS parameters";
     }
 
     if (connect(hostAddress.c_str(), port) != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.print() << "Could not connect!";
+        m_statusWindow.printLine() << "Could not connect";
     }
 
+    /// @todo make this a for loop over an array of strings
+    m_statusWindow.printLine() << "Subscribing to +/devices/+/up..";
     if (subscribe(nullptr, "+/devices/+/up", 0) != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.print() << "Could not subscribe!";
+        m_statusWindow.printLine() << "Could not subscribe";
     }
 
     /// @todo subscribe to all topics
@@ -62,8 +67,8 @@ MqttClient::~MqttClient()
 {
     if (mosqpp::lib_cleanup() != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.print()
-            << "There was problem with cleaning up mosquittopp!";
+        m_statusWindow.printLine()
+            << "There was problem with cleaning up mosquittopp";
         std::terminate();
     }
 }
@@ -72,15 +77,22 @@ void MqttClient::on_message(const struct mosquitto_message* message)
 {
     if (message)
     {
-        m_statusWindow.print() << "New message arrived!";
-
         const std::string topic{message->topic};
         const std::string payloadJson{static_cast<char*>(message->payload)};
 
+        // Read sensor node name
+        auto last = topic.rfind("/");
+        auto first = topic.rfind("/", last - 1);
+        auto length = last - first;
+        std::string nodeName{topic.substr(first + 1, length - 1)};
+
+        m_statusWindow.printLine() << "Uplink message from " << nodeName;
+
         JSONCPP_STRING err;
         Json::Value jsonRoot;
-        Json::CharReaderBuilder builder;
-        const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+        Json::CharReaderBuilder readerBuilder;
+        const std::unique_ptr<Json::CharReader> reader(
+            readerBuilder.newCharReader());
 
         if (!reader->parse(payloadJson.c_str(),
                            payloadJson.c_str() + payloadJson.length(),
@@ -91,6 +103,8 @@ void MqttClient::on_message(const struct mosquitto_message* message)
             std::terminate();
         }
 
+        m_messageWindow.display() << jsonRoot.toStyledString();
+
         base64::decoder base64Decoder;
 
         std::string payloadBase64{jsonRoot["payload_raw"].asString()};
@@ -98,7 +112,9 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         base64Decoder.decode(
             payloadBase64.c_str(), payloadBase64.length(), decodedPayload);
 
-        m_messageWindow.print() << "Test message";
+        /// @todo maybe add color as param?
+        /// Move std::hex to method which takes T value
+        // m_payloadWindow.display() << std::hex << decodedPayload;
 
         /*std::cout << "sensorInstance: " << jsonRoot["dev_id"].asString()
                   << endl;

@@ -7,9 +7,50 @@ namespace csf
 namespace tui
 {
 
-Stream::Stream(Window& window) : m_window(window) {}
+Stream::Stream(Window& window)
+    : m_window(window)
+{
+}
 
-Stream::~Stream()
+Stream& Stream::operator<<(const char* charString)
+{
+    m_message.append(charString);
+    return *this;
+}
+
+Stream& Stream::operator<<(const std::string& string)
+{
+    m_message.append(string);
+    return *this;
+}
+
+template <typename T>
+Stream& Stream::operator<<(const T& value)
+{
+    /// @todo std::bitset
+    m_message.append(std::to_string(value));
+    return *this;
+}
+
+MessageStream::MessageStream(Window& window)
+    : Stream(window)
+{
+}
+
+MessageStream::~MessageStream()
+{
+    m_window.addstr(1, 2, m_message.c_str());
+
+    // Reprint border
+    m_window.printBorder();
+}
+
+StatusStream::StatusStream(Window& window)
+    : Stream(window)
+{
+}
+
+StatusStream::~StatusStream()
 {
     // Get current position of the cursor
     int x;
@@ -37,20 +78,6 @@ Stream::~Stream()
     {
         m_window.scroll();
     }
-}
-
-Stream& Stream::operator<<(const char* value)
-{
-    m_message.append(value);
-    return *this;
-}
-
-template <typename T>
-Stream& Stream::operator<<(const T& value)
-{
-    /// @todo std::bitset
-    m_message.append(std::to_string(value));
-    return *this;
 }
 
 } // namespace tui

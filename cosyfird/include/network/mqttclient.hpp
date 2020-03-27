@@ -21,7 +21,8 @@ class MqttClient : public mosqpp::mosquittopp
                const std::string& clientId,
                const std::string& password,
                tui::Window& statusWindow,
-               tui::Window& messageWindow);
+               tui::Window& messageWindow,
+               tui::Window& payloadWindow);
 
     virtual ~MqttClient();
 
@@ -34,6 +35,7 @@ class MqttClient : public mosqpp::mosquittopp
 
     tui::Window& m_statusWindow;
     tui::Window& m_messageWindow;
+    tui::Window& m_payloadWindow;
 };
 } // namespace network
 } // namespace csf

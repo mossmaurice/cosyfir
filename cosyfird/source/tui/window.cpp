@@ -4,7 +4,8 @@ namespace csf
 namespace tui
 {
 Window::Window(std::string title, int lines, int cols, int beginX, int beginY)
-    : NCursesColorWindow(lines, cols, beginX, beginY), m_title(title)
+    : NCursesColorWindow(lines, cols, beginX, beginY)
+    , m_title(title)
 {
     // Refresh automatically
     immedok(true);
@@ -14,13 +15,14 @@ Window::Window(std::string title, int lines, int cols, int beginX, int beginY)
 
     printBorder();
 
-    /// @todo make this user configurable
-    scrollok(true);
+    scrollok(false);
 
     move(1, 1);
 }
 
-Stream Window::print() { return Stream(*this); }
+StatusStream Window::printLine() { return StatusStream(*this); }
+
+MessageStream Window::display() { return MessageStream(*this); }
 
 void Window::printBorder()
 {

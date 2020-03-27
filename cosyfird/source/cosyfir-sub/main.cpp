@@ -20,21 +20,20 @@ int main()
     tui::App cosyfirdApp;
 
     // Create left window
-    tui::Window statusWindow{" Log ", 30, 60, 3, 5};
+    tui::Window statusWindow{" Log ", 30, 62, 3, 5};
 
     // Create window for LoRa payload
-    tui::Window payloadWindow{
-        " Payload (hex) ", 10, 50, 3, 70}; // @todo mabye tui::HexWindow?
+    tui::Window payloadWindow{" Payload (hex) ", 10, 60, 3, 70};
 
     // Create right window with full MQTT message
-    tui::Window messageWindow{" Full MQTT message ", 18, 50, 15, 70};
+    tui::Window messageWindow{" Full MQTT message ", 18, 60, 15, 70};
 
     // Print to left window
-    statusWindow.print() << "Reading " << yamlFile << "..";
+    statusWindow.printLine() << "Reading " << yamlFile << "..";
     ConfigParser mqttSettings{yamlFile};
 
     // Print to left window
-    statusWindow.print() << "Connecting to TTN server..";
+    statusWindow.printLine() << "Connecting to TTN server..";
 
     /// @todo wrap this in an std::optional
     network::MqttClient client{mqttSettings.getHostAddress(),
@@ -42,18 +41,19 @@ int main()
                                mqttSettings.getClientId(),
                                mqttSettings.getPassword(),
                                statusWindow,
-                               messageWindow};
+                               messageWindow,
+                               payloadWindow};
 
     while (statusWindow.getch() != 'q')
     {
         if (client.loop()
             != MOSQ_ERR_SUCCESS) // @todo maybe put this to a thread
         {
-            statusWindow.print() << "Could not loop!";
+            statusWindow.printLine() << "Could not loop!";
         }
         else
         {
-            statusWindow.print() << "Loop!";
+            statusWindow.printLine() << "Loop!";
         }
         std::this_thread::sleep_for(100ms);
     }

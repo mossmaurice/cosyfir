@@ -9,7 +9,8 @@ namespace csf
 namespace tui
 {
 
-class Stream;
+class StatusStream;
+class MessageStream;
 
 class Window : public NCursesColorWindow
 {
@@ -21,10 +22,9 @@ class Window : public NCursesColorWindow
     Window& operator=(const Window&) = delete;
     Window& operator=(Window&&) = delete;
 
-    Stream print();
-    /// @todo
-    // HexStream displayHex();
-    // Stream showMessage();
+    StatusStream printLine();
+
+    MessageStream display();
 
     void printBorder();
 

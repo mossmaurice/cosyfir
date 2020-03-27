@@ -2,8 +2,8 @@
 
 #include "tui/window.hpp"
 
-#include <string>
 #include <chrono>
+#include <string>
 
 namespace csf
 {
@@ -17,18 +17,18 @@ class Stream
 {
   public:
     Stream(Window& window);
-    virtual ~Stream();
+    virtual ~Stream() = default;
     Stream(const Stream&) = default;
     Stream(Stream&&) = default;
     Stream& operator=(const Stream&) = default;
     Stream& operator=(Stream&&) = default;
 
     Stream& operator<<(const char* value);
-
+    Stream& operator<<(const std::string& string);
     template <typename T>
     Stream& operator<<(const T& value);
 
-  private:
+  protected:
     Window& m_window;
 
     using SysClock = std::chrono::system_clock;
@@ -37,5 +37,20 @@ class Stream
     TimePoint m_timePoint{SysClock::now()};
     std::string m_message;
 };
+
+class MessageStream : public Stream
+{
+  public:
+    MessageStream(Window& window);
+    ~MessageStream() override;
+};
+
+class StatusStream : public Stream
+{
+  public:
+    StatusStream(Window& window);
+    ~StatusStream() override;
+};
+
 } // namespace tui
 } // namespace csf
