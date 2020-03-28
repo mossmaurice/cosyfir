@@ -12,4 +12,4 @@ add_executable(cosyfird source/cosyfird/main.cpp
                         source/tui/window.cpp
                         source/tui/stream.cpp)
 
-target_link_libraries(cosyfird ${CURSES_LIBRARIES} ncurses++ mosquittopp yaml-cpp jsoncpp b64)
+target_link_libraries(cosyfird ${CURSES_LIBRARIES} ncurses++ mosquittopp yaml-cpp jsoncpp b64 pthread)

@@ -126,9 +126,9 @@ void MqttClient::on_message(const struct mosquitto_message* message)
             //                           << " bytes but printed only 8";
         }
         m_payloadWindow.display()
-            << " | " << bytes[0] << " | " << bytes[1] << " | " << bytes[2]
+            << "| " << bytes[0] << " | " << bytes[1] << " | " << bytes[2]
             << " | " << bytes[3] << " | " << bytes[4] << " | " << bytes[5]
-            << " | " << bytes[6] << " | " << bytes[7] << " | ";
+            << " | " << bytes[6] << " | " << bytes[7] << " |";
     }
 }
 } // namespace network

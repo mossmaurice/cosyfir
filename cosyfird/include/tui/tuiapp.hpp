@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cursesapp.h>
-
+#include <thread>
 namespace csf
 {
 namespace tui
@@ -28,6 +28,7 @@ class App : public NCursesApplication
   private:
     int run() override;
     void makeColorPairs();
+    bool m_running{true};
 };
 } // namespace tui
 } // namespace csf

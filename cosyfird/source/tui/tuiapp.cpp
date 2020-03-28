@@ -47,6 +47,9 @@ int App::run()
 
     makeColorPairs();
 
+    // Make cursor invisible
+    curs_set(0);
+
     // Create left window
     tui::Window statusWindow{" Log ", 30, 62, 3, 5};
 
@@ -78,21 +81,31 @@ int App::run()
                                messageWindow,
                                payloadWindow};
 
+    auto networkLoop = [&]() {
+        while (m_running)
+        {
+            if (client.loop() != MOSQ_ERR_SUCCESS)
+            {
+                statusWindow.printLine() << "Network problem, please restart";
+            }
+            std::this_thread::sleep_for(100ms);
+        }
+    };
+
+    std::thread networkThread{networkLoop};
+
     while (statusWindow.waitForExit())
     {
-        if (client.loop()
-            != MOSQ_ERR_SUCCESS) // @todo maybe put this to a thread
-        {
-            statusWindow.printLine() << "Network problem, please restart";
-        }
-        else
-        {
-            statusWindow.printLine() << "Loop!";
-        }
-        std::this_thread::sleep_for(100ms);
     }
 
-    return 0;
+    statusWindow.printLine() << "Exiting gracefully..";
+    m_running = false;
+    if (networkThread.joinable())
+    {
+        networkThread.join();
+    }
+    std::this_thread::sleep_for(1s);
+    return EXIT_SUCCESS;
 }
 
 } // namespace tui
