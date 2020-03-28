@@ -1,4 +1,4 @@
-#include "cosyfir-sub/configparser.hpp"
+#include "cosyfird/configparser.hpp"
 
 #include <yaml-cpp/yaml.h>
 

@@ -1,5 +1,5 @@
 #include "tui/tuiapp.hpp"
-#include "cosyfir-sub/configparser.hpp"
+#include "cosyfird/configparser.hpp"
 #include "network/mqttclient.hpp"
 #include "tui/window.hpp"
 
