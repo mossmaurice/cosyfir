@@ -117,15 +117,18 @@ void MqttClient::on_message(const struct mosquitto_message* message)
 
         base64Decoder.decode(in, out);
 
-        char byte[32];
-        out.read(byte, sizeof(byte));
+        char bytes[32];
+        out.read(bytes, sizeof(bytes));
         auto readBytes = out.gcount();
-
-        /// @todo maybe add color as param?
+        if (readBytes > 8)
+        {
+            //m_statusWindow.printLine() << "Warning: Received " << readBytes
+            //                           << " bytes but printed only 8";
+        }
         m_payloadWindow.display()
-            << " | " << byte[0] << " | " << byte[1] << " | " << byte[2] << " | "
-            << byte[3] << " | " << byte[4] << " | " << byte[5] << " | "
-            << byte[6] << " | " << byte[7] << " | ";
+            << " | " << bytes[0] << " | " << bytes[1] << " | " << bytes[2]
+            << " | " << bytes[3] << " | " << bytes[4] << " | " << bytes[5]
+            << " | " << bytes[6] << " | " << bytes[7] << " | ";
     }
 }
 } // namespace network

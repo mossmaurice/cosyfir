@@ -23,16 +23,17 @@ int main()
     tui::Window statusWindow{" Log ", 30, 62, 3, 5};
 
     // Create window for LoRa payload
-    tui::Window payloadWindow{" Payload (hex) ", 10, 60, 3, 70};
+    tui::Window payloadWindow{
+        " Last payload (hex) ", 10, 60, 3, 70, tui::TextPosition::CENTER};
 
     // Create right window with full MQTT message
-    tui::Window messageWindow{" Full MQTT message ", 18, 60, 15, 70};
+    tui::Window messageWindow{" Last full MQTT message ", 18, 60, 15, 70};
 
-    // Print to left window
+    // Parse yaml config file
     statusWindow.printLine() << "Reading " << yamlFile << "..";
     ConfigParser mqttSettings{yamlFile};
 
-    // Print to left window
+    // Establish connecting to TTN server
     statusWindow.printLine() << "Connecting to TTN server..";
 
     /// @todo wrap this in an std::optional

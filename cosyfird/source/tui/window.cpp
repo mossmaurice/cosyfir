@@ -3,28 +3,47 @@ namespace csf
 {
 namespace tui
 {
-Window::Window(std::string title, int lines, int cols, int beginX, int beginY)
+Window::Window(const std::string title,
+               const uint16_t lines,
+               const uint16_t cols,
+               const uint16_t beginX,
+               const uint16_t beginY,
+               const TextPosition textPosition,
+               const uint8_t textColor,
+               const uint8_t textBackgroundColor)
     : m_parentWindow(lines, cols, beginX, beginY)
     , m_subWindow(m_parentWindow, true)
     , m_title(title)
+    , m_textPosition(textPosition)
 {
-    m_parentWindow.useColors();
-    m_subWindow.useColors();
 
     // Refresh automatically
     m_subWindow.immedok(true);
     m_parentWindow.immedok(true);
 
+    // Allow scrolling
+    m_subWindow.scrollok(true);
+
+    m_parentWindow.useColors();
+    m_subWindow.useColors();
+
+    // Set background colors
     init_pair(1, COLOR_BLACK, COLOR_WHITE);
     m_subWindow.bkgd(COLOR_PAIR(1));
     m_parentWindow.bkgd(COLOR_PAIR(1));
 
-    printTitle();
+    // Print title
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);
+    m_parentWindow.color_set(2);
+    m_parentWindow.addstr(0, 3, m_title.c_str());
 
-    m_subWindow.scrollok(true);
+    // Set text and background color
+    static uint8_t colorPairCount{3};
+    init_pair(colorPairCount, textColor, textBackgroundColor);
+    m_subWindow.color_set(colorPairCount);
+    colorPairCount++;
 }
 
-/// @todo StatusStream& ?
 StatusStream Window::printLine()
 {
     return StatusStream(*this);
@@ -51,26 +70,30 @@ void Window::addStringWithNewline(std::string& string)
     {
         m_subWindow.scroll();
     }
-};
+}
 
 void Window::showString(std::string& string)
 {
     m_subWindow.clear();
-    /// @todo add possibility for centered output
-    m_subWindow.addstr(0, 0, string.c_str());
+
+    if (m_textPosition == TextPosition::LEFT)
+    {
+        m_subWindow.addstr(0, 0, string.c_str());
+    }
+    else
+    {
+        auto heigth = m_subWindow.height();
+        auto width = m_subWindow.width();
+        auto centerHeight = heigth / 2;
+        auto centerWidth = (width - string.size()) / 2;
+
+        m_subWindow.addstr(centerHeight, centerWidth, string.c_str());
+    }
 }
 
 bool Window::waitForExit()
 {
     return m_subWindow.getch() != 'q';
-}
-
-void Window::printTitle()
-{
-    init_pair(2, COLOR_WHITE, COLOR_BLACK);
-    m_parentWindow.color_set(2);
-    m_parentWindow.addstr(0, 3, m_title.c_str());
-    m_parentWindow.color_set(1);
 }
 
 } // namespace tui

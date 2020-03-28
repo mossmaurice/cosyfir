@@ -12,10 +12,23 @@ namespace tui
 class StatusStream;
 class MessageStream;
 
+enum class TextPosition
+{
+    LEFT,
+    CENTER
+};
+
 class Window
 {
   public:
-    Window(std::string title, int lines, int cols, int beginX, int beginY);
+    Window(const std::string title,
+           const uint16_t lines,
+           const uint16_t cols,
+           const uint16_t beginX,
+           const uint16_t beginY,
+           const TextPosition = TextPosition::LEFT,
+           const uint8_t textColor = COLOR_BLACK,
+           const uint8_t textBackground = COLOR_WHITE);
     virtual ~Window() = default;
     Window(const Window&) = delete;
     Window(Window&&) = delete;
@@ -33,15 +46,14 @@ class Window
 
     void showString(std::string& string);
 
-    void printTitle();
-
     /// @brief Returns true if 'q' key was pressed
     bool waitForExit();
 
   private:
-    std::string m_title;
     NCursesWindow m_parentWindow;
     NCursesWindow m_subWindow;
+    std::string m_title;
+    TextPosition m_textPosition;
 };
 } // namespace tui
 } // namespace csf

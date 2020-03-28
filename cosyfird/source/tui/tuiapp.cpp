@@ -7,20 +7,18 @@ namespace tui
 App::App()
     : NCursesApplication(true)
 {
+    init_pair(greenOnWhite, COLOR_WHITE, COLOR_GREEN);
 }
 
-App::~App() { endwin(); }
-
-int App::run() { return 0; }
-
-void App::addTitle()
+App::~App()
 {
-    const std::string title = "Status log";
-
-    titleWindow->bkgd(screen_titles());
-    titleWindow->addstr(
-        0, (titleWindow->cols() - title.length()) / 2, title.c_str());
-    titleWindow->noutrefresh();
+    endwin();
 }
+
+int App::run()
+{
+    return 0;
+}
+
 } // namespace tui
 } // namespace csf

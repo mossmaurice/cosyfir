@@ -18,8 +18,7 @@ class App : public NCursesApplication
 
     int run() override;
 
-  private:
-    void addTitle();
+    uint8_t greenOnWhite{3};
 };
 } // namespace tui
 } // namespace csf
