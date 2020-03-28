@@ -44,7 +44,7 @@ int main()
                                messageWindow,
                                payloadWindow};
 
-    while (statusWindow.getch() != 'q')
+    while (statusWindow.waitForExit())
     {
         if (client.loop()
             != MOSQ_ERR_SUCCESS) // @todo maybe put this to a thread

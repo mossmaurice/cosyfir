@@ -12,7 +12,7 @@ namespace tui
 class StatusStream;
 class MessageStream;
 
-class Window : public NCursesColorWindow
+class Window
 {
   public:
     Window(std::string title, int lines, int cols, int beginX, int beginY);
@@ -22,14 +22,26 @@ class Window : public NCursesColorWindow
     Window& operator=(const Window&) = delete;
     Window& operator=(Window&&) = delete;
 
+    /// @brief Prints a line with date
     StatusStream printLine();
 
+    /// @brief Displays stream, replacing old content
     MessageStream display();
 
-    void printBorder();
+    /// @brief Prints string in new line
+    void addStringWithNewline(std::string& string);
+
+    void showString(std::string& string);
+
+    void printTitle();
+
+    /// @brief Returns true if 'q' key was pressed
+    bool waitForExit();
 
   private:
     std::string m_title;
+    NCursesWindow m_parentWindow;
+    NCursesWindow m_subWindow;
 };
 } // namespace tui
 } // namespace csf

@@ -10,6 +10,7 @@ namespace csf
 {
 namespace network
 {
+/// @todo create a struct of first four params
 MqttClient::MqttClient(const std::string& hostAddress,
                        const uint16_t& port,
                        const std::string& clientId,
@@ -108,23 +109,23 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         base64::decoder base64Decoder;
 
         std::string payloadBase64{jsonRoot["payload_raw"].asString()};
-        char decodedPayload[4];
-        base64Decoder.decode(
-            payloadBase64.c_str(), payloadBase64.length(), decodedPayload);
+
+        std::stringstream in;
+        std::stringstream out;
+
+        in << payloadBase64;
+
+        base64Decoder.decode(in, out);
+
+        char byte[32];
+        out.read(byte, sizeof(byte));
+        auto readBytes = out.gcount();
 
         /// @todo maybe add color as param?
-        /// Move std::hex to method which takes T value
-        // m_payloadWindow.display() << std::hex << decodedPayload;
-
-        /*std::cout << "sensorInstance: " << jsonRoot["dev_id"].asString()
-                  << endl;
-        std::cout << "devEui: " << jsonRoot["hardware_serial"].asString()
-                  << endl;
-        std::cout << "frameCounter: " << jsonRoot["counter"].asUInt() << endl;
-        for (auto byte : decodedPayload)
-        {
-            printf("payload (hex): %02x", decodedPayload[byte]);
-        }*/
+        m_payloadWindow.display()
+            << " | " << byte[0] << " | " << byte[1] << " | " << byte[2] << " | "
+            << byte[3] << " | " << byte[4] << " | " << byte[5] << " | "
+            << byte[6] << " | " << byte[7] << " | ";
     }
 }
 } // namespace network

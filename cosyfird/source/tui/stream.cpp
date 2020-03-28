@@ -24,14 +24,6 @@ Stream& Stream::operator<<(const std::string& string)
     return *this;
 }
 
-template <typename T>
-Stream& Stream::operator<<(const T& value)
-{
-    /// @todo std::bitset
-    m_message.append(std::to_string(value));
-    return *this;
-}
-
 MessageStream::MessageStream(Window& window)
     : Stream(window)
 {
@@ -39,10 +31,7 @@ MessageStream::MessageStream(Window& window)
 
 MessageStream::~MessageStream()
 {
-    m_window.addstr(1, 2, m_message.c_str());
-
-    // Reprint border
-    m_window.printBorder();
+    m_window.showString(m_message);
 }
 
 StatusStream::StatusStream(Window& window)
@@ -52,11 +41,6 @@ StatusStream::StatusStream(Window& window)
 
 StatusStream::~StatusStream()
 {
-    // Get current position of the cursor
-    int x;
-    int y;
-    m_window.getyx(x, y);
-
     m_message.append("\n");
 
     // Add date and time to output
@@ -66,18 +50,7 @@ StatusStream::~StatusStream()
                << " " << m_message;
     std::string messageWithDate = strMessage.str();
 
-    // Print message to window
-    m_window.addstr(x, 2, messageWithDate.c_str());
-    m_window.move(x + 1, 2);
-
-    // Reprint border
-    m_window.printBorder();
-
-    // In case we reached the bottom, let the oldest line disappear
-    if (x > m_window.lines())
-    {
-        m_window.scroll();
-    }
+    m_window.addStringWithNewline(messageWithDate);
 }
 
 } // namespace tui
