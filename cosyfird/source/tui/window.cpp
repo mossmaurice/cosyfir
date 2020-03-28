@@ -9,13 +9,13 @@ Window::Window(const std::string title,
                const uint16_t beginX,
                const uint16_t beginY,
                const TextPosition textPosition,
-               const uint8_t textColor,
-               const uint8_t textBackgroundColor)
+               const ColorPair colorPair)
     : m_parentWindow(lines, cols, beginX, beginY)
     , m_subWindow(m_parentWindow, true)
     , m_title(title)
     , m_textPosition(textPosition)
 {
+    using ColorPairType = std::underlying_type<ColorPair>::type;
 
     // Refresh automatically
     m_subWindow.immedok(true);
@@ -24,24 +24,19 @@ Window::Window(const std::string title,
     // Allow scrolling
     m_subWindow.scrollok(true);
 
-    m_parentWindow.useColors();
-    m_subWindow.useColors();
-
     // Set background colors
-    init_pair(1, COLOR_BLACK, COLOR_WHITE);
-    m_subWindow.bkgd(COLOR_PAIR(1));
-    m_parentWindow.bkgd(COLOR_PAIR(1));
+    m_subWindow.bkgd(
+        COLOR_PAIR(static_cast<ColorPairType>(ColorPair::BLACK_ON_WHITE)));
+    m_parentWindow.bkgd(
+        COLOR_PAIR(static_cast<ColorPairType>(ColorPair::BLACK_ON_WHITE)));
 
     // Print title
-    init_pair(2, COLOR_WHITE, COLOR_BLACK);
-    m_parentWindow.color_set(2);
+    m_parentWindow.color_set(
+        static_cast<ColorPairType>(ColorPair::BLACK_ON_YELLOW));
     m_parentWindow.addstr(0, 3, m_title.c_str());
 
     // Set text and background color
-    static uint8_t colorPairCount{3};
-    init_pair(colorPairCount, textColor, textBackgroundColor);
-    m_subWindow.color_set(colorPairCount);
-    colorPairCount++;
+    m_subWindow.color_set(static_cast<ColorPairType>(colorPair));
 }
 
 StatusStream Window::printLine()

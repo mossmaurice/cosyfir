@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tui/stream.hpp"
+#include "tui/tuiapp.hpp"
 
 #include "cursesw.h"
 
@@ -27,8 +28,7 @@ class Window
            const uint16_t beginX,
            const uint16_t beginY,
            const TextPosition = TextPosition::LEFT,
-           const uint8_t textColor = COLOR_BLACK,
-           const uint8_t textBackground = COLOR_WHITE);
+           const ColorPair colorPair = ColorPair::BLACK_ON_WHITE);
     virtual ~Window() = default;
     Window(const Window&) = delete;
     Window(Window&&) = delete;

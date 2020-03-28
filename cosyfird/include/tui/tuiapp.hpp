@@ -6,6 +6,15 @@ namespace csf
 {
 namespace tui
 {
+
+enum class ColorPair : uint16_t
+{
+    BLACK_ON_WHITE = 1,
+    WHITE_ON_BLACK,
+    BLACK_ON_YELLOW,
+    WHITE_ON_GREEN
+};
+
 class App : public NCursesApplication
 {
   public:
@@ -16,9 +25,9 @@ class App : public NCursesApplication
     App& operator=(const App&) = delete;
     App& operator=(App&&) = delete;
 
+  private:
     int run() override;
-
-    uint8_t greenOnWhite{3};
+    void makeColorPairs();
 };
 } // namespace tui
 } // namespace csf
