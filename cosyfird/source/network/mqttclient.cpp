@@ -22,6 +22,8 @@ MqttClient::MqttClient(const std::string& hostAddress,
     , m_messageWindow(messageWindow)
     , m_payloadWindow(payloadWindow)
 {
+    statusWindow.printLine() << "Connecting to TTN server..";
+
     if (mosqpp::lib_init() != mosq_err_t::MOSQ_ERR_SUCCESS)
     {
         // Early exit
@@ -30,7 +32,7 @@ MqttClient::MqttClient(const std::string& hostAddress,
 
     if (username_pw_set(clientId.c_str(), password.c_str()) != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.printLine() << "Could not connect";
+        m_statusWindow.printLine() << "Could not set password and username";
     }
 
     if (tls_set(PEM_FILE, nullptr, nullptr, nullptr, nullptr)
@@ -41,27 +43,21 @@ MqttClient::MqttClient(const std::string& hostAddress,
 
     if (connect(hostAddress.c_str(), port) != MOSQ_ERR_SUCCESS)
     {
-        m_statusWindow.printLine() << "Could not connect";
+        m_statusWindow.printLine() << "Could not connect to server";
     }
 
-    /// @todo make this a for loop over an array of strings
-    m_statusWindow.printLine() << "Subscribing to +/devices/+/up..";
-    if (subscribe(nullptr, "+/devices/+/up", 0) != MOSQ_ERR_SUCCESS)
+    m_statusWindow.printLine() << "Sucessfully connected with TTN server";
+
+    for (auto& topic : m_topics)
     {
-        m_statusWindow.printLine() << "Could not subscribe";
+        m_statusWindow.printLine()
+            << "Subscribing to " << topic.c_str() << "..";
+        if (subscribe(nullptr, topic.c_str(), 0) != MOSQ_ERR_SUCCESS)
+        {
+            m_statusWindow.printLine()
+                << "Could not subscribe to " << topic.c_str();
+        }
     }
-
-    /// @todo subscribe to all topics
-    /// activations "my-app-id/devices/my-dev-id/events/activations"
-    /// Uplink Errors: <AppID>/devices/<DevID>/events/up/errors
-    /// Downlink Errors: <AppID>/devices/<DevID>/events/down/errors
-    /// Activation Errors: <AppID>/devices/<DevID>/events/activations/errors
-    /// Downlink Acknowledgements: <AppID>/devices/<DevID>/events/down/acks
-    /// Created: <AppID>/devices/<DevID>/events/create
-    /// Updated: <AppID>/devices/<DevID>/events/update
-    /// Deleted: <AppID>/devices/<DevID>/events/delete
-    /// Downlink Scheduled: <AppID>/devices/<DevID>/events/down/scheduled
-    /// Downlink Sent: <AppID>/devices/<DevID>/events/down/sent
 }
 
 MqttClient::~MqttClient()
@@ -122,7 +118,7 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         auto readBytes = out.gcount();
         if (readBytes > 8)
         {
-            //m_statusWindow.printLine() << "Warning: Received " << readBytes
+            // m_statusWindow.printLine() << "Warning: Received " << readBytes
             //                           << " bytes but printed only 8";
         }
         m_payloadWindow.display()

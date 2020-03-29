@@ -4,6 +4,7 @@
 
 #include <mosquittopp.h>
 #include <string>
+#include <vector>
 
 /// @note TTN is using Let's Encrypt, let's hardcode their root cert for the
 /// time being
@@ -36,6 +37,23 @@ class MqttClient : public mosqpp::mosquittopp
     tui::Window& m_statusWindow;
     tui::Window& m_messageWindow;
     tui::Window& m_payloadWindow;
+
+    std::vector<std::string> m_topics{
+        "+/devices/+/up",     // Uplink messages from any node
+        "+/devices/+/events/" // Events from any node
+    };
+
+    /// @todo all relevant topics added?
+    /// activations "my-app-id/devices/my-dev-id/events/activations"
+    /// Uplink Errors: <AppID>/devices/<DevID>/events/up/errors
+    /// Downlink Errors: <AppID>/devices/<DevID>/events/down/errors
+    /// Activation Errors: <AppID>/devices/<DevID>/events/activations/errors
+    /// Downlink Acknowledgements: <AppID>/devices/<DevID>/events/down/acks
+    /// Created: <AppID>/devices/<DevID>/events/create
+    /// Updated: <AppID>/devices/<DevID>/events/update
+    /// Deleted: <AppID>/devices/<DevID>/events/delete
+    /// Downlink Scheduled: <AppID>/devices/<DevID>/events/down/scheduled
+    /// Downlink Sent: <AppID>/devices/<DevID>/events/down/sent
 };
 } // namespace network
 } // namespace csf

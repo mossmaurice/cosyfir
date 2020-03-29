@@ -70,8 +70,6 @@ int App::run()
     ConfigParser mqttSettings{yamlFile};
 
     // Establish connecting to TTN server
-    statusWindow.printLine() << "Connecting to TTN server..";
-
     /// @todo wrap this in an std::optional, nope we're using exceptions
     network::MqttClient client{mqttSettings.getHostAddress(),
                                mqttSettings.getPort(),
