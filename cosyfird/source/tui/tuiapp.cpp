@@ -55,7 +55,7 @@ int App::run()
 
     // Create window for LoRa payload
     tui::Window payloadWindow{" Last payload (hex) ",
-                              10,
+                              6,
                               60,
                               3,
                               70,
@@ -63,7 +63,7 @@ int App::run()
                               ColorPair::WHITE_ON_GREEN};
 
     // Create right window with full MQTT message
-    tui::Window messageWindow{" Last full MQTT message ", 18, 60, 15, 70};
+    tui::Window messageWindow{" Last full MQTT message ", 22, 60, 11, 70};
 
     // Parse yaml config file
     statusWindow.printLine() << "Reading " << yamlFile << "..";
