@@ -1,5 +1,7 @@
 # **CO**ntrol **SY**stem **F**or **IR**igation
 
+![cosyfir logo](/doc/cosyfir-logo.jpg)
+
 Cosyfir helps you watering your plants. The node software runs on an STM32 ARM Cortex microcontroller. The server software runs on UNIX-based system like Debian. The following picture depicts an example setup:
 
      []        +--+       +--+         \  /        \o/
