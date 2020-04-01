@@ -11,7 +11,7 @@ Cosyfir helps you watering your plants. The node software runs on an STM32 ARM C
     Sensor    LoRaWAN     TTN          RPi        User
      Node     Gateway    Server       @home
 
-    ./node/* (Not part of cosyfir)  ./cosyfird/*
+    ./node/* (Not part of cosyfir)  ./server/*
 
 This readme describes both the server (e.g. Raspberry Pi) and the sensor node software in the following sections.
 

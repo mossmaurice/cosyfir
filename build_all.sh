@@ -8,11 +8,11 @@ BUILD_ARGS=${1}
 if [ $BUILD_ARGS = "clean" ]
 then
     rm -rf node/build
-    rm -rf cosyfird/build
+    rm -rf server/build
 fi
 
 echo "~~~~~ Start building CoSyfIr daemon ~~~~~"
-cd cosyfird
+cd server
 mkdir -p build
 cd build
 cmake ..
