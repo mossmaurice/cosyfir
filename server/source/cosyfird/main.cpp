@@ -16,5 +16,6 @@ int main(int argc, char* argv[]) try
 }
 catch (const NCursesException& exception)
 {
-    /// @todo
+    std::cerr << "Problem with NCurses occured: " << exception.message
+              << " Errno: " << exception.errorno << std::endl;
 }
