@@ -26,9 +26,10 @@ ConfigParser::ConfigParser(tui::Window& window, std::string yamlFile)
     }
 }
 
-/// @todo
 const MqttConfig ConfigParser::getMqttConfig() const
 {
+    return MqttConfig{
+        getHostAddress(), getPort(), getClientId(), getPassword()};
 }
 
 const std::string ConfigParser::getHostAddress() const

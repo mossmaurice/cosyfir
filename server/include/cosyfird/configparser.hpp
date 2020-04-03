@@ -8,7 +8,6 @@ namespace tui
 {
 class Window;
 }
-/// @todo
 struct MqttConfig
 {
     std::string hostAddress;
@@ -30,13 +29,12 @@ class ConfigParser
 
     const MqttConfig getMqttConfig() const;
 
-    // private: @todo
+  private:
     const std::string getHostAddress() const;
     const uint16_t getPort() const;
     const std::string getClientId() const;
     const std::string getPassword() const;
 
-  private:
     YAML::Node m_config;
 };
 

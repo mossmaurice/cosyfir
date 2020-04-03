@@ -12,15 +12,13 @@ constexpr char PEM_FILE[] = "/etc/ssl/certs/DST_Root_CA_X3.pem";
 
 namespace csf
 {
+struct MqttConfig;
 namespace network
 {
 class MqttClient : public mosqpp::mosquittopp
 {
   public:
-    MqttClient(const std::string& hostAddress,
-               const uint16_t& port,
-               const std::string& clientId,
-               const std::string& password,
+    MqttClient(const MqttConfig& mqttConfig,
                tui::Window& statusWindow,
                tui::Window& messageWindow,
                tui::Window& payloadWindow);

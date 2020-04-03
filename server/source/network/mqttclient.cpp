@@ -1,4 +1,5 @@
 #include "network/mqttclient.hpp"
+#include "cosyfird/configparser.hpp"
 
 #include <b64/decode.h>
 #include <cursesapp.h>
@@ -10,11 +11,7 @@ namespace csf
 {
 namespace network
 {
-/// @todo create a struct of first four params
-MqttClient::MqttClient(const std::string& hostAddress,
-                       const uint16_t& port,
-                       const std::string& clientId,
-                       const std::string& password,
+MqttClient::MqttClient(const MqttConfig& mqttConfig,
                        tui::Window& statusWindow,
                        tui::Window& messageWindow,
                        tui::Window& payloadWindow)
@@ -30,7 +27,9 @@ MqttClient::MqttClient(const std::string& hostAddress,
         throw;
     }
 
-    if (username_pw_set(clientId.c_str(), password.c_str()) != MOSQ_ERR_SUCCESS)
+    if (username_pw_set(mqttConfig.clientId.c_str(),
+                        mqttConfig.password.c_str())
+        != MOSQ_ERR_SUCCESS)
     {
         m_statusWindow.printLine() << "Could not set password and username";
         throw;
@@ -43,7 +42,8 @@ MqttClient::MqttClient(const std::string& hostAddress,
         throw;
     }
 
-    if (connect(hostAddress.c_str(), port) != MOSQ_ERR_SUCCESS)
+    if (connect(mqttConfig.hostAddress.c_str(), mqttConfig.port)
+        != MOSQ_ERR_SUCCESS)
     {
         m_statusWindow.printLine() << "Could not connect to server";
         throw;
