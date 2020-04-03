@@ -107,9 +107,10 @@ int App::run()
     }
     catch (const std::exception& exception)
     {
-        statusWindow.printLine() << "Exiting..";
-        /// @todo replace sleep with Press q to exit
-        std::this_thread::sleep_for(3s);
+        statusWindow.printLine() << "Press 'q' to exit";
+        while (statusWindow.waitForExit())
+        {
+        }
         return EXIT_FAILURE;
     }
 }
