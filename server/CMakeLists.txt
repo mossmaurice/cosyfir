@@ -5,6 +5,8 @@ find_package(Curses REQUIRED)
 find_library(mosquittopp REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR} "include/")
 
+set(CMAKE_CXX_STANDARD 17)
+
 add_executable(cosyfird source/cosyfird/main.cpp
                         source/cosyfird/configparser.cpp
                         source/network/mqttclient.cpp
@@ -12,4 +14,4 @@ add_executable(cosyfird source/cosyfird/main.cpp
                         source/tui/window.cpp
                         source/tui/stream.cpp)
 
-target_link_libraries(cosyfird ${CURSES_LIBRARIES} ncurses++ mosquittopp yaml-cpp jsoncpp b64 pthread)
+target_link_libraries(cosyfird ${CURSES_LIBRARIES} ncurses++ mosquittopp yaml-cpp jsoncpp b64 pthread stdc++fs)

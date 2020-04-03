@@ -28,9 +28,11 @@ class Stream
 
     Stream& operator<<(const char* value);
     Stream& operator<<(const std::string& string);
+    Stream& operator<<(const std::stringstream& sstring);
 
     /// @todo not for floats, std::bitset?
-    template <typename T>
+    template <typename T,
+              typename = std::enable_if_t<std::is_arithmetic<T>::value>>
     Stream& operator<<(const T& value)
     {
         std::stringstream sstream;

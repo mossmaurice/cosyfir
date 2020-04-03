@@ -26,24 +26,27 @@ MqttClient::MqttClient(const std::string& hostAddress,
 
     if (mosqpp::lib_init() != mosq_err_t::MOSQ_ERR_SUCCESS)
     {
-        // Early exit
-        std::terminate();
+        m_statusWindow.printLine() << "Initalization of mosquittopp failed";
+        throw;
     }
 
     if (username_pw_set(clientId.c_str(), password.c_str()) != MOSQ_ERR_SUCCESS)
     {
         m_statusWindow.printLine() << "Could not set password and username";
+        throw;
     }
 
     if (tls_set(PEM_FILE, nullptr, nullptr, nullptr, nullptr)
         != MOSQ_ERR_SUCCESS)
     {
         m_statusWindow.printLine() << "Could not set TLS parameters";
+        throw;
     }
 
     if (connect(hostAddress.c_str(), port) != MOSQ_ERR_SUCCESS)
     {
         m_statusWindow.printLine() << "Could not connect to server";
+        throw;
     }
 
     m_statusWindow.printLine() << "Sucessfully connected with TTN server";
@@ -56,6 +59,7 @@ MqttClient::MqttClient(const std::string& hostAddress,
         {
             m_statusWindow.printLine()
                 << "Could not subscribe to " << topic.c_str();
+            throw;
         }
     }
 }
@@ -66,7 +70,6 @@ MqttClient::~MqttClient()
     {
         m_statusWindow.printLine()
             << "There was problem with cleaning up mosquittopp";
-        std::terminate();
     }
 }
 
@@ -97,7 +100,7 @@ void MqttClient::on_message(const struct mosquitto_message* message)
                            &err))
         {
             // Error occured
-            std::terminate();
+            throw;
         }
 
         m_messageWindow.display() << jsonRoot.toStyledString();

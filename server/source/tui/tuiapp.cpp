@@ -22,6 +22,7 @@ App::~App()
     endwin();
 }
 
+/// @todo move this to init method
 void App::makeColorPairs()
 {
     using ColorPairType = std::underlying_type<ColorPair>::type;
@@ -65,45 +66,56 @@ int App::run()
     // Create right window with full MQTT message
     tui::Window messageWindow{" Last full MQTT message ", 22, 60, 11, 70};
 
-    // Parse yaml config file
-    statusWindow.printLine() << "Reading " << yamlFile << "..";
-    ConfigParser mqttSettings{yamlFile};
+    try
+    {
+        // Read config file
+        ConfigParser mqttSettings{statusWindow, yamlFile};
 
-    // Establish connecting to TTN server
-    /// @todo wrap this in an std::optional, nope we're using exceptions
-    network::MqttClient client{mqttSettings.getHostAddress(),
-                               mqttSettings.getPort(),
-                               mqttSettings.getClientId(),
-                               mqttSettings.getPassword(),
-                               statusWindow,
-                               messageWindow,
-                               payloadWindow};
+        // Establish connecting to TTN server
+        /// @todo wrap this in an std::optional, nope we're using exceptions
+        network::MqttClient client{mqttSettings.getHostAddress(),
+                                   mqttSettings.getPort(),
+                                   mqttSettings.getClientId(),
+                                   mqttSettings.getPassword(),
+                                   statusWindow,
+                                   messageWindow,
+                                   payloadWindow};
 
-    auto networkLoop = [&]() {
-        while (m_running)
-        {
-            if (client.loop() != MOSQ_ERR_SUCCESS)
+        auto networkLoop = [&]() {
+            while (m_running)
             {
-                statusWindow.printLine() << "Network problem, please restart";
+                if (client.loop() != MOSQ_ERR_SUCCESS)
+                {
+                    statusWindow.printLine()
+                        << "Network problem, please restart";
+                }
+                std::this_thread::sleep_for(100ms);
             }
-            std::this_thread::sleep_for(100ms);
+        };
+
+        std::thread networkThread{networkLoop};
+
+        while (statusWindow.waitForExit())
+        {
         }
-    };
 
-    std::thread networkThread{networkLoop};
+        m_running = false;
+        if (networkThread.joinable())
+        {
+            networkThread.join();
+        }
 
-    while (statusWindow.waitForExit())
-    {
+        statusWindow.printLine() << "Stopping gracefully..";
+        std::this_thread::sleep_for(3s);
+        return EXIT_SUCCESS;
     }
-
-    statusWindow.printLine() << "Exiting gracefully..";
-    m_running = false;
-    if (networkThread.joinable())
+    catch (const std::exception& exception)
     {
-        networkThread.join();
+        statusWindow.printLine() << "Exiting..";
+        /// @todo replace sleep with Press q to exit
+        std::this_thread::sleep_for(3s);
+        return EXIT_FAILURE;
     }
-    std::this_thread::sleep_for(1s);
-    return EXIT_SUCCESS;
 }
 
 } // namespace tui

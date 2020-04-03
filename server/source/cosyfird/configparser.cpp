@@ -1,13 +1,34 @@
 #include "cosyfird/configparser.hpp"
+#include "tui/window.hpp"
 
+#include <filesystem>
 #include <yaml-cpp/yaml.h>
 
 namespace csf
 {
-
-ConfigParser::ConfigParser(std::string yamlFile)
+ConfigParser::ConfigParser(tui::Window& window, std::string yamlFile)
 {
-    m_config = YAML::LoadFile(yamlFile);
+    window.printLine() << "Reading " << yamlFile << "..";
+
+    try
+    {
+        m_config = YAML::LoadFile(yamlFile);
+    }
+    catch (const YAML::ParserException& exception)
+    {
+        window.printLine() << "YAML file could not be parsed, check syntax";
+    }
+    catch (const YAML::BadFile& exception)
+    {
+        window.printLine() << "Could not open "
+                           << std::filesystem::current_path() << yamlFile;
+        throw;
+    }
+}
+
+/// @todo
+const MqttConfig ConfigParser::getMqttConfig() const
+{
 }
 
 const std::string ConfigParser::getHostAddress() const

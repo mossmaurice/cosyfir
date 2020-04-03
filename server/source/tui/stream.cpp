@@ -24,6 +24,12 @@ Stream& Stream::operator<<(const std::string& string)
     return *this;
 }
 
+Stream& Stream::operator<<(const std::stringstream& sstring)
+{
+    m_message.append(sstring.str());
+    return *this;
+}
+
 MessageStream::MessageStream(Window& window)
     : Stream(window)
 {
