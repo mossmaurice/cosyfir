@@ -3,6 +3,8 @@
 
 #include <b64/decode.h>
 #include <cursesapp.h>
+#include <iomanip>
+#include <ios>
 #include <iostream>
 #include <jsoncpp/json/json.h>
 #include <memory>
@@ -82,9 +84,9 @@ void MqttClient::on_message(const struct mosquitto_message* message)
 
         // Read sensor node name
         auto last = topic.rfind("/");
-        auto first = topic.rfind("/", last - 1);
-        auto length = last - first;
-        std::string nodeName{topic.substr(first + 1, length - 1)};
+        auto secondLast = topic.rfind("/", last - 1);
+        auto length = last - secondLast;
+        std::string nodeName{topic.substr(secondLast + 1, length - 1)};
 
         m_statusWindow.printLine() << "Uplink message from " << nodeName;
 
@@ -116,18 +118,39 @@ void MqttClient::on_message(const struct mosquitto_message* message)
 
         base64Decoder.decode(in, out);
 
-        char bytes[32];
-        out.read(bytes, sizeof(bytes));
-        auto readBytes = out.gcount();
-        if (readBytes > 8)
+        constexpr uint8_t BYTE_COUNT{8};
+
+        /// @note ANDing the bitmask is needed due to the fact that chars are
+        /// interpreted as characters and not uint8_t
+        uint8_t bitmask = 0xff;
+
+        std::stringstream sstring;
+        sstring << std::uppercase << std::setfill('0') << std::setw(2)
+                << std::hex << " | ";
+
+        uint8_t validBytes{0};
+
+        while (out.good())
         {
-            // m_statusWindow.printLine() << "Warning: Received " << readBytes
-            //                           << " bytes but printed only 8";
+            auto value = (bitmask & out.get());
+            if (out.gcount() > 0)
+            {
+                validBytes++;
+                if (validBytes <= BYTE_COUNT)
+                {
+                    sstring << value << " | ";
+                }
+            }
         }
-        m_payloadWindow.display()
-            << "| " << bytes[0] << " | " << bytes[1] << " | " << bytes[2]
-            << " | " << bytes[3] << " | " << bytes[4] << " | " << bytes[5]
-            << " | " << bytes[6] << " | " << bytes[7] << " |";
+
+        m_payloadWindow.display() << sstring;
+
+        if (validBytes > BYTE_COUNT)
+        {
+            m_statusWindow.printLine()
+                << "Warning: Received " << validBytes
+                << " bytes but printed only " << BYTE_COUNT;
+        }
     }
 }
 } // namespace network
