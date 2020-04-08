@@ -47,8 +47,8 @@ class Window
     /// @brief Clears the window and displays the string
     void showString(std::string& string);
 
-    /// @brief Returns true if 'q' key was pressed
-    bool waitForExit();
+    /// @brief Waits till 'q' key was pressed
+    void waitForExit();
 
   private:
     NCursesWindow m_parentWindow;

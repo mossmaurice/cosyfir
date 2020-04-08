@@ -74,9 +74,11 @@ void Window::showString(std::string& string)
     }
 }
 
-bool Window::waitForExit()
+void Window::waitForExit()
 {
-    return m_subWindow.getch() != 'q';
+    while (m_subWindow.getch() != 'q')
+    {
+    }
 }
 
 } // namespace tui

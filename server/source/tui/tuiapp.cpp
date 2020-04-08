@@ -91,9 +91,7 @@ int App::run()
 
         std::thread networkThread{networkLoop};
 
-        while (statusWindow.waitForExit())
-        {
-        }
+        statusWindow.waitForExit();
 
         m_running = false;
         if (networkThread.joinable())
@@ -108,9 +106,7 @@ int App::run()
     catch (const std::exception& exception)
     {
         statusWindow.printLine() << "Press 'q' to exit";
-        while (statusWindow.waitForExit())
-        {
-        }
+        statusWindow.waitForExit();
         return EXIT_FAILURE;
     }
 }
