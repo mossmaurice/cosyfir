@@ -49,22 +49,10 @@ MessageStream Window::display()
     return MessageStream(*this);
 }
 
-void Window::addStringWithNewline(std::string& string)
+void Window::addString(std::string& string)
 {
-    // Get current position of the cursor
-    int x;
-    int y;
-    m_subWindow.getyx(x, y);
-
     // Print message to window
-    m_subWindow.addstr(x, 0, string.c_str());
-    m_subWindow.move(x + 1, 0);
-
-    // In case we reached the bottom, let the oldest line disappear
-    if (x > m_subWindow.lines())
-    {
-        m_subWindow.scroll();
-    }
+    m_subWindow.addstr(string.c_str());
 }
 
 void Window::showString(std::string& string)
@@ -75,7 +63,7 @@ void Window::showString(std::string& string)
     {
         m_subWindow.addstr(0, 0, string.c_str());
     }
-    else
+    else // TextPosition::CENTER
     {
         auto heigth = m_subWindow.height();
         auto width = m_subWindow.width();

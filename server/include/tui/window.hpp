@@ -41,9 +41,10 @@ class Window
     /// @brief Displays stream, replacing old content
     MessageStream display();
 
-    /// @brief Prints string in new line
-    void addStringWithNewline(std::string& string);
+    /// @brief Prints string at current cursor position
+    void addString(std::string& string);
 
+    /// @brief Clears the window and displays the string
     void showString(std::string& string);
 
     /// @brief Returns true if 'q' key was pressed

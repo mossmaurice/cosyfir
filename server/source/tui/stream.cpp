@@ -56,7 +56,7 @@ StatusStream::~StatusStream()
                << " " << m_message;
     std::string messageWithDate = strMessage.str();
 
-    m_window.addStringWithNewline(messageWithDate);
+    m_window.addString(messageWithDate);
 }
 
 } // namespace tui
