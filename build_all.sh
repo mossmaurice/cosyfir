@@ -2,7 +2,7 @@
 
 set -e
 WORKSPACE=$(git rev-parse --show-toplevel)
-# Possible build arguments are "clean", "test"
+# Possible build arguments are "clean"
 BUILD_ARGS=${1}
 
 if [ $BUILD_ARGS = "clean" ]
@@ -19,15 +19,10 @@ cmake ..
 make -j8
 cd $WORKSPACE
 
-echo "~~~~~ Start building CoSyfIr node ~~~~~"
+echo "~~~~~ Start building CoSyfIr sensor node ~~~~~"
 cd node
 mkdir -p build
 cd build
 cmake -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" ..
 make -j8
 cd $WORKSPACE
-
-#if [$BUILD_ARGS = "test"]
-#then
-    #run tests
-#fi

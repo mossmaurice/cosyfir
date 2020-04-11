@@ -1,12 +1,14 @@
-# **CO**ntrol **SY**stem **F**or **IR**igation
+# ![cosyfir logo](/doc/cosyfir-logo-small.jpg) **CO**ntrol **SY**stem **F**or **IR**igation
 
-![cosyfir logo](/doc/cosyfir-logo.jpg)
+> **_Disclaimer:_** This is a personal project and not affiliated with my employer
 
-Cosyfir helps you watering your plants. The node software runs on an STM32 ARM Cortex microcontroller. The server software runs on UNIX-based system like Debian. The following picture depicts an example setup:
+Cosyfir shall help you watering your plants.
 
-     []        +--+       +--+         \  /        \o/
-     []  <->   |  |  <->  |  |  <->   ( )( )  <->   |
-     \/  LoRa  +--+       +--+  MQTT   (  )   SSH  / \
+The node software runs on an STM32 ARM Cortex microcontroller. The server software runs on UNIX-based systems like Debian. The following picture depicts an example setup:
+
+     []         \ /       +--+         \  /        \o/
+     []  <->     |   <->  |  |  <->   ( )( )  <->   |
+     \/  LoRa    |        +--+  MQTT   (  )   SSH  / \
 
     Sensor    LoRaWAN     TTN          RPi        User
      Node     Gateway    Server       @home
@@ -15,92 +17,140 @@ Cosyfir helps you watering your plants. The node software runs on an STM32 ARM C
 
 This readme describes both the server (e.g. Raspberry Pi) and the sensor node software in the following sections.
 
-## Prerequisites
+## Server
 
-E.g. on a Debian based system install the following packages:
+The cosyfird application is a daemon, which receives messages from sensor nodes via TTN server and displays the last
+message.
 
-    sudo apt install clang-format stm32flash arm-none-eabi-gcc gcc cmake
-
-## Build everything
-
-    ./build_all.sh
-
-If you want to run the tests after the build add "test".
-
-    ./build_all.sh test
-
-For a clean build add the parameter "clean" instead of "test".
-
-## cosyfir daemon
-
-### Required hardware and software
+### Required hard- and software
 
 * Computer running UNIX-like OS e.g. Raspberry Pi with Raspbian
 
-[libmosquittopp](https://mosquitto.org/) is used as MQTT library.
+Install the following software packages e.g. for Debian do:
 
-    sudo apt install libmosquittopp-dev libssl-dev libyaml-cpp-dev libjsoncpp-dev libb64-dev
+    sudo apt install libncurses6 libmosquittopp1 libssl1.1 libyaml-cpp0.6 gcc cmake libjsoncpp1 libb64-0d
 
 C++17 compiler is required. GCC 8.3.0 is recommended.
 
-Currently two applications are available:
+## Sensor node
 
-* cosyfir-sub: Receives messages from nodes via the TTN server
-* cosyfir-pub: Publishes messages to nodes
+This section describes the sensor node software which communicates based on [LoRa](https://en.wikipedia.org/wiki/LoRa) and [TTN](https://www.thethingsnetwork.org/).
 
-## Node
-
-This section describes the node software which communicates based on [LoRa](https://en.wikipedia.org/wiki/LoRa) and [TTN](https://www.thethingsnetwork.org/).
-
-### Required hardware and software
+### Required hard- and software
 
 * [LSN50 v1.2](http://www.dragino.com/products/lora-lorawan-end-node/item/128-lsn50.html) from Dragino (I bought it [here](https://www.exp-tech.de/plattformen/internet-of-things-iot/8377/dragino-lsn50-868-12-waterproof-long-range-wireless-lora-sensor-node))
   * STM32L072CZT6
   * Semtech SX1276
   * Battery
   * IP66 case
+* DS18B20 temperature sensor
 * FTDI UART cable
 * UNIX machine
   * [stm32flash](https://sourceforge.net/p/stm32flash/wiki/Home/) version  >=0.5
 
-stm32flash should be available with most distros, e.g. for Debian do:
+Install the following packages:
 
-    sudo apt install stm32flash
+    sudo apt install stm32flash arm-none-eabi-gcc
 
-### How to flash
+## Build and setup
 
-Connected as described below:
+Before building the binaries, let's register our cosyfir application on the TTN website.
+
+### Setup cosyfird and cosyfir-node with TTN
+
+The following is a YAML configuration file template for cosyfird:
+
+```yaml
+MqttConfig:
+    HostAddress: region.thethings.network
+    Port: 8883
+    ClientId: application-id
+    Password: secret
+```
+
+TTN uses port `8883` with SSL and the host address `region.thethings.network` where `region` can be e.g. `eu`.
+
+First of all, create a client identifier on the TTN site by clicking "Add application" on your personal
+[network console](https://console.thethingsnetwork.org/). The application access key can be found at the bottom after
+you have created an application. It acts as the password for the MQTT connection.
+
+Here's an overview of the LoRa terminology:
+
+| LoRa              | Explanation                           | From where?                          | Where to?       |
+| ------------------|---------------------------------------|--------------------------------------|:---------------:|
+| DevEUI            | 64-bit end-device identifier (unique) | On device box ("Register device")    | TTN console     |
+| AppEUI or JoinEUI | 64-bit application identifier         | Issued by TTN ("Add application")    | Commissioning.h |
+| AppKey            | Data encryption key (TTN <-> server)  | Generated by TTN ("Add application") | Commissioning.h |
+| DevAddr           | 32-bit address (non-unique)           | Assigned when node joins TTN         | -               |
+
+The activation method will always be over-the-air-activation (OTAA).
+
+Fill the defines into `node/Commissioning.h-template` as described in the table. Then do:
+
+    mv node/Commissioning.h-template node/Commissioning.h
+
+### Start the build
+
+Run the build script in root to build both server and node binary.
+
+    ./build_all.sh
+
+Available parameters to the script are:
+
+* `clean`: Perform a clean build
+
+### How to flash the sensor node
+
+Flashing LSN50 can be done with a simple FTDI UART cable using the ISP boot mode.
+
+Connect the UART as described below:
 
     GND (black):  JP4 Pin11 GND
     TXD (orange): JP3 Pin9 PA3 (USART1)
     RXD (yellow): JP3 Pin10 PA2 (USART1)
 
-Find out where your usbserial device is mounted:
+Find out where your USB serial device is mounted:
 
     journalctl -k -n 100
 
-And then from root, do:
+Set the switch from flash mode to ISP mode and then do:
 
     sudo stm32flash -w node/build/cosyfir-node /dev/ttyUSBx
 
-#### Debugging (optional)
+## Get cosyfir running
+
+Check your local [TTN coverage](https://ttnmapper.org/) and make sure a gateway is nearby. Start `./cosyfird` and
+power on the LSN50. After a few moments you should see messages arrive. In debug mode, messages are sent every minute.
+In release mode every hour.
+
+Example message payload in hex:
+
+    | CA | FE | F0 | 0D | BE | EF |
+      ^
+      Battery level
+                ^
+                Temperature
+                          ^
+                          Soil water tension
+
+## Development
+
+For development the following packages might be necessary:
+
+    sudo apt install clang-format libmosquittopp-dev libssl-dev libyaml-cpp-dev libjsoncpp-dev libb64-dev libncurses-dev
+
+### Debugging with STM32
+
+Get an ST-LINK V2 debugger and install these packages:
 
     sudo apt install stmlink-tools
-    st-flash
-    st-info
-    st-utils
 
-### What to configure in order to connect to [The Things Network](https://www.thethingsnetwork.org/)
+Three applications are available after installation:
 
-Four identifers have to be added to the commissioning header (later done via CMake):
-
-* **DevAddr:** 32-bit address (non-unique)
-* **DevEUI:** 64-bit end-device identifier (unique) written usually on device box; add this to The Things Network under "Add application" (TODO add some screenshots)
-* **AppEUI** or **JoinEUI**: 64-bit application identifier, generated by The Things Network, copy & paste from the webpage
-* **AppKey**: data encryption key known to node and server, generated by The Things Network, copy & paste from the webpage
+* **st-flash**, for flashing binaries
+* **st-info**, get infos about the microcontroller
+* **st-utils**, attach GDB to the microcontroller
 
 ## Todo
 
-* Add CMake flag for support of different sensors (e.g. temperature, soil moisture)
-* Add LoRa stack as submodule
-  * Add variable in CMake for TTN credentials?
+* Add CMake flag for support of different nodes (e.g. sensor or actor)
