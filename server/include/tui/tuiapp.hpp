@@ -27,7 +27,7 @@ class App : public NCursesApplication
 
   private:
     int run() override;
-    void makeColorPairs();
+    void init(bool enableColors) override;
     bool m_running{true};
 };
 } // namespace tui

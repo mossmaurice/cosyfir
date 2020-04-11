@@ -22,34 +22,37 @@ App::~App()
     endwin();
 }
 
-/// @todo move this to init method
-void App::makeColorPairs()
+void App::init(bool enableColors)
 {
     using ColorPairType = std::underlying_type<ColorPair>::type;
 
-    init_pair(static_cast<ColorPairType>(ColorPair::BLACK_ON_WHITE),
-              COLOR_BLACK,
-              COLOR_WHITE);
-    init_pair(static_cast<ColorPairType>(ColorPair::WHITE_ON_BLACK),
-              COLOR_WHITE,
-              COLOR_BLACK);
-    init_pair(static_cast<ColorPairType>(ColorPair::BLACK_ON_YELLOW),
-              COLOR_BLACK,
-              COLOR_YELLOW);
-    init_pair(static_cast<ColorPairType>(ColorPair::WHITE_ON_GREEN),
-              COLOR_WHITE,
-              COLOR_GREEN);
+    if (enableColors)
+    {
+        NCursesWindow::useColors();
+
+        init_pair(static_cast<ColorPairType>(ColorPair::BLACK_ON_WHITE),
+                  COLOR_BLACK,
+                  COLOR_WHITE);
+        init_pair(static_cast<ColorPairType>(ColorPair::WHITE_ON_BLACK),
+                  COLOR_WHITE,
+                  COLOR_BLACK);
+        init_pair(static_cast<ColorPairType>(ColorPair::BLACK_ON_YELLOW),
+                  COLOR_BLACK,
+                  COLOR_YELLOW);
+        init_pair(static_cast<ColorPairType>(ColorPair::WHITE_ON_GREEN),
+                  COLOR_WHITE,
+                  COLOR_GREEN);
+    }
+
+    // Make cursor invisible
+    curs_set(0);
 }
 
 int App::run()
 {
     using namespace std::chrono_literals;
+    /// @todo create a vector of search paths and add info to --help
     constexpr char yamlFile[] = "cosyfird.yaml";
-
-    makeColorPairs();
-
-    // Make cursor invisible
-    curs_set(0);
 
     // Create left window
     tui::Window statusWindow{" Log ", 30, 62, 3, 5};
@@ -84,6 +87,7 @@ int App::run()
                 {
                     statusWindow.printLine()
                         << "Network problem, please restart";
+                    throw;
                 }
                 std::this_thread::sleep_for(100ms);
             }
