@@ -1,4 +1,7 @@
 #include "tui/window.hpp"
+#include "tui/message_stream.hpp"
+#include "tui/status_stream.hpp"
+
 namespace csf
 {
 namespace tui

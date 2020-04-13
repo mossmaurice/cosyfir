@@ -12,6 +12,8 @@ add_executable(cosyfird source/cosyfird/main.cpp
                         source/network/mqttclient.cpp
                         source/tui/tuiapp.cpp
                         source/tui/window.cpp
-                        source/tui/stream.cpp)
+                        source/tui/stream.cpp
+                        source/tui/status_stream.cpp
+                        source/tui/message_stream.cpp)
 
 target_link_libraries(cosyfird ${CURSES_LIBRARIES} ncurses++ mosquittopp yaml-cpp jsoncpp b64 pthread stdc++fs)

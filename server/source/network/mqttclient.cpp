@@ -1,5 +1,7 @@
 #include "network/mqttclient.hpp"
 #include "cosyfird/configparser.hpp"
+#include "tui/message_stream.hpp"
+#include "tui/status_stream.hpp"
 
 #include <b64/decode.h>
 #include <cursesapp.h>

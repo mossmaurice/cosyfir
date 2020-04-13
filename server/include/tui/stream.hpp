@@ -48,19 +48,5 @@ class Stream
     std::string m_message;
 };
 
-class MessageStream : public Stream
-{
-  public:
-    MessageStream(Window& window);
-    ~MessageStream() override;
-};
-
-class StatusStream : public Stream
-{
-  public:
-    StatusStream(Window& window);
-    ~StatusStream() override;
-};
-
 } // namespace tui
 } // namespace csf

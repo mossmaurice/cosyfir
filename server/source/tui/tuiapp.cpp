@@ -1,6 +1,7 @@
 #include "tui/tuiapp.hpp"
 #include "cosyfird/configparser.hpp"
 #include "network/mqttclient.hpp"
+#include "tui/status_stream.hpp"
 #include "tui/window.hpp"
 
 #include <chrono>

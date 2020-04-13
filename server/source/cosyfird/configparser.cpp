@@ -1,4 +1,5 @@
 #include "cosyfird/configparser.hpp"
+#include "tui/status_stream.hpp"
 #include "tui/window.hpp"
 
 #include <filesystem>
@@ -21,7 +22,8 @@ ConfigParser::ConfigParser(tui::Window& window, std::string yamlFile)
     catch (const YAML::BadFile& exception)
     {
         window.printLine() << "Could not open "
-                           << std::filesystem::current_path() << "/" << yamlFile;
+                           << std::filesystem::current_path() << "/"
+                           << yamlFile;
         throw;
     }
 }

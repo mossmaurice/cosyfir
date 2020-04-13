@@ -1,6 +1,5 @@
 #pragma once
 
-#include "tui/stream.hpp"
 #include "tui/tuiapp.hpp"
 
 #include "cursesw.h"
