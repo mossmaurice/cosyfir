@@ -2,7 +2,6 @@
 #include "tui/status_stream.hpp"
 #include "tui/window.hpp"
 
-#include <filesystem>
 #include <yaml-cpp/yaml.h>
 
 namespace csf
@@ -21,9 +20,7 @@ ConfigParser::ConfigParser(tui::Window& window, std::string yamlFile)
     }
     catch (const YAML::BadFile& exception)
     {
-        window.printLine() << "Could not open "
-                           << std::filesystem::current_path() << "/"
-                           << yamlFile;
+        window.printLine() << "Could not open " << yamlFile;
         throw;
     }
 }
