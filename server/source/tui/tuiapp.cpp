@@ -3,9 +3,11 @@
 #include "network/mqttclient.hpp"
 #include "tui/status_stream.hpp"
 #include "tui/window.hpp"
+#include "version.h"
 
 #include <chrono>
 #include <exception>
+#include <getopt.h>
 #include <optional>
 #include <thread>
 
@@ -18,9 +20,74 @@ App::App()
 {
 }
 
-App::~App()
+int App::titlesize() const
 {
-    endwin();
+    return 1;
+}
+
+void App::title()
+{
+    using ColorPairType = std::underlying_type<ColorPair>::type;
+
+    titleWindow = new NCursesWindow(1, 21, 0, 57);
+    titleWindow->immedok(true);
+    titleWindow->color_set(
+        static_cast<ColorPairType>(ColorPair::BLACK_ON_YELLOW));
+
+    std::string title{" cosyfird v"};
+    title.append(versionString);
+    title.append(" ");
+    titleWindow->addstr(title.c_str());
+}
+
+void App::handleArgs(int argc, char* argv[])
+{
+    constexpr const option longOpt[] = {
+        {"help", no_argument, nullptr, 'h'},
+        {"version", no_argument, nullptr, 'V'},
+        {"config-file", required_argument, nullptr, 'c'},
+        {0, 0, 0, 0}};
+    constexpr char shortOpt[] = "hVc:";
+    int opt{-1};
+    int optIndex{0};
+
+    while ((opt = getopt_long(argc, argv, shortOpt, longOpt, &optIndex)) != -1)
+    {
+        switch (opt)
+        {
+        case 'h':
+            std::cout << "Usage is: cosyfird [options]" << std::endl;
+            std::cout << "Available options are:" << std::endl;
+            std::cout << "  -h, --help              Show this usage output"
+                      << std::endl;
+            std::cout << "  -V, --version           Show version and build time"
+                      << std::endl;
+            std::cout << "  -c, --config-file=FILE  Use given config file"
+                      << std::endl;
+            std::cout << "                          Default path "
+                         "is '/etc/cosyfir/cosyfird.yaml'"
+                      << std::endl;
+            m_running = false;
+            break;
+
+        case 'V':
+            std::cout << "Version:             " << versionString << std::endl;
+            std::cout << "Build date and time: " << buildDateTimeString
+                      << std::endl;
+            m_running = false;
+            break;
+
+        case 'c':
+            defaultConfigPath.clear();
+            defaultConfigPath = optarg;
+            break;
+
+        default:
+            // Do not start the app if an argument isn't known
+            m_running = false;
+            break;
+        }
+    }
 }
 
 void App::init(bool enableColors)
@@ -52,8 +119,12 @@ void App::init(bool enableColors)
 int App::run()
 {
     using namespace std::chrono_literals;
-    /// @todo create a vector of search paths and add info to --help
-    constexpr char yamlFile[] = "cosyfird.yaml";
+
+    // Early exit in case user told us via command line param
+    if (m_running == false)
+    {
+        return EXIT_SUCCESS;
+    }
 
     // Create left window
     tui::Window statusWindow{" Log ", 30, 62, 3, 5};
@@ -73,7 +144,7 @@ int App::run()
     try
     {
         // Read config file
-        ConfigParser mqttSettings{statusWindow, yamlFile};
+        ConfigParser mqttSettings{statusWindow, defaultConfigPath};
 
         // Establish connecting to TTN server
         network::MqttClient client{mqttSettings.getMqttConfig(),

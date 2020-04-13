@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.13)
-project (cosyfird)
+project(cosyfird VERSION 0.1.0)
 
 find_package(Curses REQUIRED)
 find_library(mosquittopp REQUIRED)
-include_directories(${CURSES_INCLUDE_DIR} "include/")
+include_directories(${CURSES_INCLUDE_DIR} ${CMAKE_BINARY_DIR}/generated/ "include/")
 
 set(CMAKE_CXX_STANDARD 17)
+
+string(TIMESTAMP NOW "%Y-%m-%d %H:%M:%S")
+
+configure_file(../common/version.h.in ${CMAKE_BINARY_DIR}/generated/version.h)
 
 add_executable(cosyfird source/cosyfird/main.cpp
                         source/cosyfird/configparser.cpp
