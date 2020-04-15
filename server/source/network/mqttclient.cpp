@@ -84,6 +84,17 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         const std::string topic{message->topic};
         const std::string payloadJson{static_cast<char*>(message->payload)};
 
+        /// @todo Add parsing of other event types
+        /// Uplink Errors: <AppID>/devices/<DevID>/events/up/errors
+        /// Downlink Errors: <AppID>/devices/<DevID>/events/down/errors
+        /// Activation Errors: <AppID>/devices/<DevID>/events/activations/errors
+        /// Downlink Acknowledgements: <AppID>/devices/<DevID>/events/down/acks
+        /// Created: <AppID>/devices/<DevID>/events/create
+        /// Updated: <AppID>/devices/<DevID>/events/update
+        /// Deleted: <AppID>/devices/<DevID>/events/delete
+        /// Downlink Scheduled: <AppID>/devices/<DevID>/events/down/scheduled
+        /// Downlink Sent: <AppID>/devices/<DevID>/events/down/sent
+
         // Read sensor node name
         auto last = topic.rfind("/");
         auto secondLast = topic.rfind("/", last - 1);
