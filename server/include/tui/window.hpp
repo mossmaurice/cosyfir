@@ -49,6 +49,9 @@ class Window
     /// @brief Waits till 'q' key was pressed
     void waitForExit();
 
+    /// @brief Returns user input
+    int getKeyStroke();
+
   private:
     NCursesWindow m_parentWindow;
     NCursesWindow m_subWindow;

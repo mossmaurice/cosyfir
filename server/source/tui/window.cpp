@@ -27,6 +27,9 @@ Window::Window(const std::string title,
     // Allow scrolling
     m_subWindow.scrollok(true);
 
+    // Use function keys
+    m_subWindow.keypad(true);
+
     // Set background colors
     m_subWindow.bkgd(
         COLOR_PAIR(static_cast<ColorPairType>(ColorPair::BLACK_ON_WHITE)));
@@ -64,7 +67,7 @@ void Window::showString(std::string& string)
 
     if (m_textPosition == TextPosition::LEFT)
     {
-        m_subWindow.addstr(0, 0, string.c_str());
+        m_subWindow.addstr(string.c_str());
     }
     else // TextPosition::CENTER
     {
@@ -82,6 +85,11 @@ void Window::waitForExit()
     while (m_subWindow.getch() != 'q')
     {
     }
+}
+
+int Window::getKeyStroke()
+{
+    return m_subWindow.getch();
 }
 
 } // namespace tui

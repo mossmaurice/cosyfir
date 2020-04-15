@@ -1,6 +1,7 @@
 #include "tui/tuiapp.hpp"
 #include "cosyfird/configparser.hpp"
 #include "network/mqttclient.hpp"
+#include "tui/message_stream.hpp"
 #include "tui/status_stream.hpp"
 #include "tui/window.hpp"
 #include "version.h"
@@ -141,6 +142,9 @@ int App::run()
     // Create right window with full MQTT message
     tui::Window messageWindow{" Last full MQTT message ", 22, 60, 11, 70};
 
+    tui::Window infoWindow{"", 3, 30, 34, 5};
+    infoWindow.display() << "q: Exit the program";
+
     try
     {
         // Read config file
@@ -167,15 +171,31 @@ int App::run()
 
         std::thread networkThread{networkLoop};
 
-        statusWindow.waitForExit();
+        while (m_running)
+        {
+            switch (statusWindow.getKeyStroke())
+            {
+            case 'q':
+                statusWindow.printLine() << "Stopping gracefully..";
+                m_running = false;
+                break;
+            case 's':
+                statusWindow.printLine()
+                    << "Sending dummy downlink message to all nodes";
+                /// @todo
+                // client.publish();
+                break;
+            default:
+                statusWindow.printLine() << "Warning: Unkown key pressed";
+                break;
+            }
+        }
 
-        m_running = false;
         if (networkThread.joinable())
         {
             networkThread.join();
         }
 
-        statusWindow.printLine() << "Stopping gracefully..";
         std::this_thread::sleep_for(3s);
         return EXIT_SUCCESS;
     }

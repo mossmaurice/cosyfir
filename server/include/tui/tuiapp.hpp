@@ -25,12 +25,11 @@ class App : public NCursesApplication
     App& operator=(const App&) = delete;
     App& operator=(App&&) = delete;
 
-    int titlesize() const override;
-    void title() override;
-
     void handleArgs(int argc, char* argv[]) override;
 
   private:
+    int titlesize() const override;
+    void title() override;
     int run() override;
     void init(bool enableColors) override;
     bool m_running{true};
