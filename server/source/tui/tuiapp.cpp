@@ -128,21 +128,21 @@ int App::run()
     }
 
     // Create left window
-    tui::Window statusWindow{" Log ", 30, 62, 3, 5};
+    tui::Window statusWindow{" Log ", 31, 62, 2, 5};
 
     // Create window for LoRa payload
     tui::Window payloadWindow{" Last payload (hex) ",
-                              6,
+                              4,
                               60,
-                              3,
+                              2,
                               70,
                               tui::TextPosition::CENTER,
                               ColorPair::WHITE_ON_GREEN};
 
     // Create right window with full MQTT message
-    tui::Window messageWindow{" Last full MQTT message ", 22, 60, 11, 70};
+    tui::Window messageWindow{" Last full MQTT message ", 30, 60, 7, 70};
 
-    tui::Window infoWindow{"", 3, 30, 34, 5};
+    tui::Window infoWindow{"", 4, 62, 33, 5};
     infoWindow.display() << "q: Exit the program";
 
     try
