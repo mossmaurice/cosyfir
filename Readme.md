@@ -85,9 +85,9 @@ Here's an overview of the LoRa terminology:
 
 The activation method will always be over-the-air-activation (OTAA).
 
-Fill the defines into `node/Commissioning.h-template` as described in the table. Then do:
+Fill the defines into `node/Commissioning_template.h` as described in the table. Then do:
 
-    mv node/Commissioning.h-template node/Commissioning.h
+    mv node/Commissioning_template.h node/Commissioning.h
 
 ### Start the build
 
