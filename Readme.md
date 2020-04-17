@@ -154,3 +154,4 @@ Three applications are available after installation:
 ## Todo
 
 * Add CMake flag for support of different nodes (e.g. sensor or actor)
+  * Split main.c into common and specific part (sensor or actor)
