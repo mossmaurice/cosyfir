@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.13)
-project (cosyfir-node)
+project (cosyfir-node VERSION 0.1.0)
 
 # Configure stm32l072xx-specific things
-set(BOARD B-L072Z-LRWAN1)
-set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/boards/B-L072Z-LRWAN1/cmsis/arm-gcc/stm32l072xx_flash.ld)
+set(BOARD LSN50)
+set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/boards/LSN50/cmsis/arm-gcc/stm32l072xx_flash.ld)
 include(LoRaMac-node/cmake/stm32l0.cmake)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/boards/B-L072Z-LRWAN1)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/boards/LSN50)
 set(RADIO sx1276 CACHE INTERNAL "Radio sx1276 selected")
 
 # General stuff
@@ -22,7 +22,7 @@ add_executable(cosyfir-node main.c #main.cpp
                             $<TARGET_OBJECTS:system>
                             $<TARGET_OBJECTS:radio>
                             $<TARGET_OBJECTS:peripherals>
-                            $<TARGET_OBJECTS:B-L072Z-LRWAN1>
+                            $<TARGET_OBJECTS:LSN50>
 )
 
 target_compile_definitions(cosyfir-node PRIVATE ACTIVE_REGION=LORAMAC_REGION_EU868)
@@ -36,7 +36,7 @@ target_include_directories(cosyfir-node PUBLIC
     $<BUILD_INTERFACE:$<TARGET_PROPERTY:system,INTERFACE_INCLUDE_DIRECTORIES>>
     $<BUILD_INTERFACE:$<TARGET_PROPERTY:radio,INTERFACE_INCLUDE_DIRECTORIES>>
     $<BUILD_INTERFACE:$<TARGET_PROPERTY:peripherals,INTERFACE_INCLUDE_DIRECTORIES>>
-    $<BUILD_INTERFACE:$<TARGET_PROPERTY:B-L072Z-LRWAN1,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:LSN50,INTERFACE_INCLUDE_DIRECTORIES>>
 )
 
 # necessary as _exit() is undefined
