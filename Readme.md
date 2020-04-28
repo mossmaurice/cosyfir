@@ -44,6 +44,7 @@ This section describes the sensor node software which communicates based on [LoR
   * Battery
   * IP66 case
 * DS18B20 temperature sensor
+* Watermark soil moistore sensor (Model 200SS)
 * FTDI UART cable
 * UNIX machine
   * [stm32flash](https://sourceforge.net/p/stm32flash/wiki/Home/) version  >=0.5
@@ -106,7 +107,7 @@ Flashing LSN50 can be done with a simple FTDI UART cable using the ISP boot mode
 Connect the UART as described below:
 
     GND (black):  JP4 Pin11 GND
-    TXD (orange): JP3 Pin9 PA3 (USART1)
+    TXD (orange): JP3 Pin9  PA3 (USART1)
     RXD (yellow): JP3 Pin10 PA2 (USART1)
 
 Find out where your USB serial device is mounted:
@@ -118,6 +119,20 @@ Set the switch from flash mode to ISP mode and then do:
     sudo stm32flash -w node/build/cosyfir-node /dev/ttyUSBx
 
 ## Get cosyfir running
+
+Connect the sensors:
+
+    # DS128B20
+    GND: JP3 Pin2 GND
+    DQ:  JP3 Pin6 PB3 (4k7 Ohm)
+    VDD: JP3 Pin2 VDD
+
+    # Watermark 200SS
+    JP3 Pin12 PA0
+    JP3 Pin5  PB4
+    # 10k resistor between PA0 and VDD and toggle PB4? Better PWM with timer
+
+[More information](https://www.irrometer.com/200ss.html) about the Watermark sensor.
 
 Check your local [TTN coverage](https://ttnmapper.org/) and make sure a gateway is nearby. Start `./cosyfird` and
 power on the LSN50. After a few moments you should see messages arrive. In debug mode, messages are sent every minute.
@@ -143,13 +158,33 @@ For development the following packages might be necessary:
 
 Get an ST-LINK V2 debugger and install these packages:
 
-    sudo apt install stmlink-tools
+    sudo apt install stmlink-tools gdb-multiarch
 
 Three applications are available after installation:
 
 * **st-flash**, for flashing binaries
 * **st-info**, get infos about the microcontroller
 * **st-utils**, attach GDB to the microcontroller
+
+Connect as described below:
+
+    GND:   JP4 Pin11 GND
+    SWCLK: JP4 Pin4  PA14
+    SWDIO: JP4 Pin9  PA13
+    RST:   JP4 Pin1  NRST
+
+Set boot switch to ISP and try:
+
+    st-info --probe
+
+If everything is running correctly, you should see the serial and other infos about the microcontroller.
+In case you don't see the infos, try swapping SWDIO and SWCLK. Some ST-LINK V2 debugger are wrongly labeled.
+
+Then you can debug with:
+
+    st-util -p 1234
+    (gdb-multiarch) set arch arm
+    (gdb-multiarch) target extended-remote localhost:1234
 
 ## Todo
 
