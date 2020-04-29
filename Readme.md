@@ -137,7 +137,7 @@ Connect the sensors:
 [More information](https://www.irrometer.com/200ss.html) about the Watermark sensor.
 
 Check your local [TTN coverage](https://ttnmapper.org/) and make sure a gateway is nearby. Start `./cosyfird` and
-power on the LSN50. After a few moments you should see messages arrive. In debug mode, messages are sent every minute.
+power on the LSN50. After a few moments you should see messages arrive. In debug mode, messages are sent every 30 seconds.
 In release mode every hour.
 
 Example message payload in hex:

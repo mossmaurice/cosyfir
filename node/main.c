@@ -76,12 +76,7 @@
  */
 #define LORAWAN_APP_PORT                            2
 
-/// @todo remove everything ABP related
-#if( ABP_ACTIVATION_LRWAN_VERSION == ABP_ACTIVATION_LRWAN_VERSION_V10x )
-static uint8_t GenAppKey[] = LORAWAN_GEN_APP_KEY;
-#else
 static uint8_t AppKey[] = LORAWAN_APP_KEY;
-#endif
 static uint8_t NwkKey[] = LORAWAN_NWK_KEY;
 
 /*!
@@ -747,17 +742,9 @@ int main( void )
                 }
                 else
                 {
-
-/// @todo remove everything ABP related
-#if( ABP_ACTIVATION_LRWAN_VERSION == ABP_ACTIVATION_LRWAN_VERSION_V10x )
-                    mibReq.Type = MIB_GEN_APP_KEY;
-                    mibReq.Param.GenAppKey = GenAppKey;
-                    LoRaMacMibSetRequestConfirm( &mibReq );
-#else
                     mibReq.Type = MIB_APP_KEY;
                     mibReq.Param.AppKey = AppKey;
                     LoRaMacMibSetRequestConfirm( &mibReq );
-#endif
 
                     mibReq.Type = MIB_NWK_KEY;
                     mibReq.Param.NwkKey = NwkKey;
@@ -787,12 +774,6 @@ int main( void )
             case DEVICE_STATE_START:
             {
                 TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );
-
-                //TimerInit( &Led1Timer, OnLed1TimerEvent );
-                //TimerSetValue( &Led1Timer, 25 );
-
-                //TimerInit( &Led3Timer, OnLed3TimerEvent );
-                //TimerSetValue( &Led3Timer, 25 );
 
                 mibReq.Type = MIB_PUBLIC_NETWORK;
                 mibReq.Param.EnablePublicNetwork = LORAWAN_PUBLIC_NETWORK;
@@ -869,8 +850,8 @@ int main( void )
             {
                 DeviceState = DEVICE_STATE_SLEEP;
 
-                // Schedule next packet transmission
-                TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
+                /// @todo Debug mode: Send every 30s, release mode: 30min
+                TxDutyCycleTime = 30000;
 
                 // Schedule next packet transmission
                 TimerSetValue( &TxNextPacketTimer, TxDutyCycleTime );
