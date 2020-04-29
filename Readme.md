@@ -90,6 +90,8 @@ Fill the defines into `node/Commissioning_template.h` as described in the table.
 
     mv node/Commissioning_template.h node/Commissioning.h
 
+The file is preconfigured to run in Europe.
+
 ### Start the build
 
 Run the build script in root to build both server and node binary.
@@ -182,11 +184,22 @@ Set boot switch to ISP and try:
 If everything is running correctly, you should see the serial and other infos about the microcontroller.
 In case you don't see the infos, try swapping SWDIO and SWCLK. Some ST-LINK V2 debugger are wrongly labeled.
 
-Then you can debug with:
+You can flash and debug your code with:
 
     st-util -p 1234
     (gdb-multiarch) set arch arm
     (gdb-multiarch) target extended-remote localhost:1234
+    (gdb-multiarch) load cosyfir-node
+
+To be able to jump back to user code, set the boot switch back to FLASH. Then you can set breakpoints and run the code
+as usual:
+
+    (gdb-multiarch) break foo.c:42
+    (gdb-multiarch) run
+
+Just loading the symbols without flashing is possible:
+
+    (gdb-multiarch) file cosyfir-node
 
 To do a warm restart, jump to the start of the flash:
 
