@@ -114,6 +114,8 @@ Find out where your USB serial device is mounted:
 
     journalctl -k -n 100
 
+<!-- @todo convert elf to bin -->
+
 Set the switch from flash mode to ISP mode and then do:
 
     sudo stm32flash -w node/build/cosyfir-node /dev/ttyUSBx
@@ -185,6 +187,10 @@ Then you can debug with:
     st-util -p 1234
     (gdb-multiarch) set arch arm
     (gdb-multiarch) target extended-remote localhost:1234
+
+To do a warm restart, jump to the start of the flash:
+
+    (gdb-multiarch) jump *0x08000000
 
 ## Todo
 

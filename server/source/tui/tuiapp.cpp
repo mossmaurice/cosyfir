@@ -163,6 +163,7 @@ int App::run()
                 {
                     statusWindow.printLine()
                         << "Network problem, please restart";
+                    /// @todo try reconneting, don't throw
                     throw;
                 }
                 std::this_thread::sleep_for(100ms);
