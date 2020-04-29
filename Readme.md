@@ -116,11 +116,9 @@ Find out where your USB serial device is mounted:
 
     journalctl -k -n 100
 
-<!-- @todo convert elf to bin -->
+Set the switch from FLASH mode to ISP mode and then do:
 
-Set the switch from flash mode to ISP mode and then do:
-
-    sudo stm32flash -w node/build/cosyfir-node /dev/ttyUSBx
+    sudo stm32flash -w node/build/cosyfir-node.hex /dev/ttyUSBx
 
 ## Get cosyfir running
 

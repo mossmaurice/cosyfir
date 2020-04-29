@@ -8,6 +8,9 @@ include(LoRaMac-node/cmake/stm32l0.cmake)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/boards/LSN50)
 set(RADIO sx1276 CACHE INTERNAL "Radio sx1276 selected")
 
+# Binutils helper
+include(LoRaMac-node/cmake/binutils-arm-none-eabi.cmake)
+
 # General stuff
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/boards)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/radio)
@@ -43,6 +46,8 @@ target_include_directories(cosyfir-node PUBLIC
 #target_link_libraries(cosyfir-node PRIVATE -specs=nosys.specs)
 
 target_link_libraries(cosyfir-node PRIVATE m)
+
+create_hex_output(cosyfir-node)
 
 ## Set CMake compiler
 #set(CMAKE_CXX_COMPILER      arm-none-eabi-g++)
