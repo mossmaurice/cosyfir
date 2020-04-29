@@ -42,7 +42,7 @@ class MqttClient : public mosqpp::mosquittopp
         /// "+" means match all
         "+/devices/+/up",     // Uplink messages from any node
         "+/devices/+/down",   // Downlink messages to any node
-        "+/devices/+/events/" // Events from any node
+        "+/devices/+/events" // Events from any node
 
     };
 };
