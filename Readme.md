@@ -207,3 +207,5 @@ To do a warm restart, jump to the start of the flash:
 
 * Add CMake flag for support of different nodes (e.g. sensor or actor)
   * Split main.c into common and specific part (sensor or actor)
+* Check errata and choose low-power mode
+  * https://www.digikey.com/eewiki/display/microcontroller/Low-Power+Modes+on+the+STM32L0+Series

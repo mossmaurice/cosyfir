@@ -874,7 +874,8 @@ int main( void )
                 else
                 {
                     // The MCU wakes up through events
-                    BoardLowPowerHandler( );
+                    /// @todo Leads to reset handler call for some reason
+                    //BoardLowPowerHandler( );
                 }
                 CRITICAL_SECTION_END( );
                 break;
