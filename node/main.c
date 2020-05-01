@@ -426,7 +426,7 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
                 break;
         }
 
-        // Switch LED 1 ON
+        // Switch LED 1 ON /// @todo remove
         //GpioWrite( &Led1, 1 );
         //TimerStart( &Led1Timer );
     }
@@ -558,7 +558,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
         case 2:
             if( mcpsIndication->BufferSize == 1 )
             {
-                AppLedStateOn = mcpsIndication->Buffer[0] & 0x01;
+                AppLedStateOn = mcpsIndication->Buffer[0] & 0x01; /// @todo remove
                 //GpioWrite( &Led4, ( ( AppLedStateOn & 0x01 ) != 0 ) ? 1 : 0 );
             }
             break;
@@ -567,7 +567,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
         }
     }
 
-    // Switch LED 3 ON for each received downlink
+    // Switch LED 3 ON for each received downlink /// @todo remove
     //GpioWrite( &Led3, 1 );
     //TimerStart( &Led3Timer );
 
@@ -783,6 +783,10 @@ int main( void )
                 mibReq.Param.AdrEnable = LORAWAN_ADR_ON;
                 LoRaMacMibSetRequestConfirm( &mibReq );
 
+                mibReq.Type = MIB_RX2_CHANNEL;
+                mibReq.Param.Rx2Channel = ( RxChannelParams_t ){ 869525000, DR_0 };
+                LoRaMacMibSetRequestConfirm( &mibReq );
+
                 mibReq.Type = MIB_SYSTEM_MAX_RX_ERROR;
                 mibReq.Param.SystemMaxRxError = 20;
                 LoRaMacMibSetRequestConfirm( &mibReq );
@@ -851,7 +855,8 @@ int main( void )
                 DeviceState = DEVICE_STATE_SLEEP;
 
                 /// @todo Debug mode: Send every 30s, release mode: 30min
-                TxDutyCycleTime = 30000;
+                //TxDutyCycleTime = APP_TX_DUTYCYCLE;
+                TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
 
                 // Schedule next packet transmission
                 TimerSetValue( &TxNextPacketTimer, TxDutyCycleTime );
