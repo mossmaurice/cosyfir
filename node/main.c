@@ -292,7 +292,7 @@ static void PrepareTxFrame( uint8_t port )
     case 2:
         {
             /// @todo Read battery level, ds18b20, humidity values here
-            AppDataSizeBackup = AppDataSize = 1;
+            AppDataSizeBackup = AppDataSize = 2;
             AppDataBuffer[0] = 0xBE;
             AppDataBuffer[1] = 0xEF;
         }
@@ -425,10 +425,6 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
             default:
                 break;
         }
-
-        // Switch LED 1 ON /// @todo remove
-        //GpioWrite( &Led1, 1 );
-        //TimerStart( &Led1Timer );
     }
     MibRequestConfirm_t mibGet;
     MibRequestConfirm_t mibReq;
@@ -556,20 +552,11 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
         /// @todo what does port mean in this context?
         case 1: // The application LED can be controlled on port 1 or 2
         case 2:
-            if( mcpsIndication->BufferSize == 1 )
-            {
-                AppLedStateOn = mcpsIndication->Buffer[0] & 0x01; /// @todo remove
-                //GpioWrite( &Led4, ( ( AppLedStateOn & 0x01 ) != 0 ) ? 1 : 0 );
-            }
             break;
         default:
             break;
         }
     }
-
-    // Switch LED 3 ON for each received downlink /// @todo remove
-    //GpioWrite( &Led3, 1 );
-    //TimerStart( &Led3Timer );
 
     const char *slotStrings[] = { "1", "2", "C", "C Multicast", "B Ping-Slot", "B Multicast Ping-Slot" };
 
@@ -850,12 +837,12 @@ int main( void )
                 DeviceState = DEVICE_STATE_CYCLE;
                 break;
             }
+            /// @todo Differentiate between DEVICE_STATE_CYCLE_JOIN and DEVICE_STATE_CYCLE_RUN
+            ///       Debug mode: Send every 30s, release mode: 30min
             case DEVICE_STATE_CYCLE:
             {
                 DeviceState = DEVICE_STATE_SLEEP;
 
-                /// @todo Debug mode: Send every 30s, release mode: 30min
-                //TxDutyCycleTime = APP_TX_DUTYCYCLE;
                 TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
 
                 // Schedule next packet transmission
