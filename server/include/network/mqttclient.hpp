@@ -40,9 +40,11 @@ class MqttClient : public mosqpp::mosquittopp
         /// @note
         /// AppID/devices/DevID/EventType
         /// "+" means match all
-        "+/devices/+/up",     // Uplink messages from any node
-        "+/devices/+/down",   // Downlink messages to any node
-        "+/devices/+/events" // Events from any node
+        "+/devices/+/up",   // Uplink messages from any node
+        "+/devices/+/down", // Downlink messages to any node
+        "+/devices/+/events/activations", // Activations from any node
+        "+/devices/+/events/down/sent", // A scheduled downlink message was sent to node
+        "+/devices/+/events/down/acks" // Acknowledge of downlink message received
 
     };
 };
