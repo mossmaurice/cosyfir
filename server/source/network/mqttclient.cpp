@@ -55,10 +55,10 @@ MqttClient::MqttClient(const MqttConfig& mqttConfig,
 
     m_statusWindow.printLine() << "Sucessfully connected with TTN server";
 
-    for (auto& topic : m_topics)
+    for (auto& topic : m_genericTopics)
     {
         m_statusWindow.printLine()
-            << "Subscribing to " << topic.c_str() << "..";
+            << "Subscribing to '" << topic.c_str() << "'..";
         if (subscribe(nullptr, topic.c_str(), 0) != MOSQ_ERR_SUCCESS)
         {
             m_statusWindow.printLine()
@@ -84,24 +84,11 @@ void MqttClient::on_message(const struct mosquitto_message* message)
         const std::string topic{message->topic};
         const std::string payloadJson{static_cast<char*>(message->payload)};
 
-        /// @todo Add parsing of other event types
-        /// Uplink Errors: <AppID>/devices/<DevID>/events/up/errors
-        /// Downlink Errors: <AppID>/devices/<DevID>/events/down/errors
-        /// Activation Errors: <AppID>/devices/<DevID>/events/activations/errors
-        /// Downlink Acknowledgements: <AppID>/devices/<DevID>/events/down/acks
-        /// Created: <AppID>/devices/<DevID>/events/create
-        /// Updated: <AppID>/devices/<DevID>/events/update
-        /// Deleted: <AppID>/devices/<DevID>/events/delete
-        /// Downlink Scheduled: <AppID>/devices/<DevID>/events/down/scheduled
-        /// Downlink Sent: <AppID>/devices/<DevID>/events/down/sent
+        m_statusWindow.printLine()
+            << "Received message on topic '" << topic << "'";
 
-        // Read sensor node name
-        auto last = topic.rfind("/");
-        auto secondLast = topic.rfind("/", last - 1);
-        auto length = last - secondLast;
-        std::string nodeName{topic.substr(secondLast + 1, length - 1)};
-
-        m_statusWindow.printLine() << "Uplink message from " << nodeName;
+        /// @todo Create iceoryx publisher with received topic here if it wasn't
+        /// found in std::map of publishers
 
         JSONCPP_STRING err;
         Json::Value jsonRoot;
