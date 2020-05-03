@@ -144,13 +144,13 @@ In release mode every hour.
 
 Example message payload in hex:
 
-    | CA | FE | F0 | 0D | BE | EF |
+    | 42 | BE | EF | CA | FE |
       ^
       Battery level
-                ^
-                Temperature
-                          ^
-                          Soil water tension
+           ^
+           Temperature
+                     ^
+                     Soil water tension
 
 ## Development
 

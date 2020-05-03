@@ -88,7 +88,6 @@ static uint8_t AppPort = LORAWAN_APP_PORT;
  * User application data size
  */
 static uint8_t AppDataSize = 8;
-static uint8_t AppDataSizeBackup = 8;
 
 /*!
  * User application data buffer size
@@ -286,10 +285,9 @@ static void PrepareTxFrame( uint8_t port )
     {
     case 2:
         {
-            /// @todo Read battery level, ds18b20, humidity values here
-            AppDataSizeBackup = AppDataSize = 2;
-            AppDataBuffer[0] = 0xBE;
-            AppDataBuffer[1] = 0xEF;
+            /// @todo Read ds18b20 and watermark values here
+            AppDataSize = 1;
+            AppDataBuffer[0] = BoardGetBatteryLevel( );
         }
         break;
     default:
