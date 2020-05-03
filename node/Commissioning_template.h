@@ -19,6 +19,8 @@
  * \author    Miguel Luis ( Semtech )
  *
  * \author    Gregory Cristian ( Semtech )
+ *
+ * \author    Simon Hoinkis
  */
 #ifndef __LORA_COMMISSIONING_H__
 #define __LORA_COMMISSIONING_H__
@@ -70,7 +72,7 @@
  * IEEE Organizationally Unique Identifier ( OUI ) (big endian)
  * \remark This is Dragino Technology Co Limited
  */
-#define IEEE_OUI                                           0x01, 0x02, 0x03
+#define IEEE_OUI                                           0xA8, 0x40, 0x41
 
 /*!
  * Mote device IEEE EUI (big endian)
@@ -92,21 +94,10 @@
 #define LORAWAN_APP_KEY                                    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F }
 
 /*!
- * Application root key - Used to derive Multicast keys on 1.0.x devices.
- * WARNING: USED only FOR 1.0.x DEVICES
- */
-#define LORAWAN_GEN_APP_KEY                                { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F }
-
-/*!
  * Network root key
  * WARNING: FOR 1.0.x DEVICES IT IS THE \ref LORAWAN_APP_KEY
  */
 #define LORAWAN_NWK_KEY                                    { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C }
-
-/*!
- * Current network ID
- */
-#define LORAWAN_NETWORK_ID                                 ( uint32_t )0
 
 /*!
  * Device address on the network (big endian)
@@ -116,28 +107,5 @@
  *         BoardUniqueId value if LORAWAN_DEVICE_ADDRESS is set to 0
  */
 #define LORAWAN_DEVICE_ADDRESS                             ( uint32_t )0x00000000
-
-/*!
- * Forwarding Network session integrity key
- * WARNING: NWK_S_KEY FOR 1.0.x DEVICES
- */
-#define LORAWAN_F_NWK_S_INT_KEY                            { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C }
-
-/*!
- * Serving Network session integrity key
- * WARNING: NOT USED FOR 1.0.x DEVICES. MUST BE THE SAME AS \ref LORAWAN_F_NWK_S_INT_KEY
- */
-#define LORAWAN_S_NWK_S_INT_KEY                            { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C }
-
-/*!
- * Network session encryption key
- * WARNING: NOT USED FOR 1.0.x DEVICES. MUST BE THE SAME AS \ref LORAWAN_F_NWK_S_INT_KEY
- */
-#define LORAWAN_NWK_S_ENC_KEY                              { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C }
-
-/*!
- * Application session key
- */
-#define LORAWAN_APP_S_KEY                                  { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C }
 
 #endif // __LORA_COMMISSIONING_H__
