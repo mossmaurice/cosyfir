@@ -116,11 +116,6 @@ static uint32_t TxDutyCycleTime;
 static TimerEvent_t TxNextPacketTimer;
 
 /*!
- * Specifies the state of the application LED
- */
-static bool AppLedStateOn = false;
-
-/*!
  * Indicates if a new packet can be sent
  */
 static bool NextTx = true;
