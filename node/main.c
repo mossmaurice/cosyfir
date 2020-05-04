@@ -46,9 +46,18 @@
 #define DS128B20_3            PA_10
 
 /*!
- * Defines the application data transmission duty cycle. 5s, value in [ms].
+ * Defines the application data transmission duty cycle. value in [ms].
  */
-#define APP_TX_DUTYCYCLE                            5000
+#if !defined(NDEBUG)
+#define APP_TX_DUTYCYCLE_RUN                        30000
+#else
+#define APP_TX_DUTYCYCLE_RUN                        1800000
+#endif
+
+/*!
+ * Defines the duty cycle before the node has joined the network. value in [ms].
+ */
+#define APP_TX_DUTYCYCLE_JOIN                       5000
 
 /*!
  * Defines a random delay for application data transmission duty cycle. 1s,
@@ -137,7 +146,8 @@ static enum eDeviceState
     DEVICE_STATE_START,
     DEVICE_STATE_JOIN,
     DEVICE_STATE_SEND,
-    DEVICE_STATE_CYCLE,
+    DEVICE_STATE_CYCLE_JOIN,
+    DEVICE_STATE_CYCLE_RUN,
     DEVICE_STATE_SLEEP
 }DeviceState;
 
@@ -274,7 +284,7 @@ static void JoinNetwork( void )
     }
     else
     {
-        DeviceState = DEVICE_STATE_CYCLE;
+        DeviceState = DEVICE_STATE_CYCLE_JOIN;
     }
 }
 
@@ -287,9 +297,9 @@ static void PrepareTxFrame( uint8_t port )
     {
     case 2:
         {
-            /// @todo Read ds18b20 and watermark values here
             AppDataSize = 1;
             AppDataBuffer[0] = BoardGetBatteryLevel( );
+            /// @todo Read ds18b20 and watermark values here
         }
         break;
     default:
@@ -829,22 +839,32 @@ int main( void )
 
                     NextTx = SendFrame( );
                 }
-                DeviceState = DEVICE_STATE_CYCLE;
+                DeviceState = DEVICE_STATE_CYCLE_RUN;
                 break;
             }
-            /// @todo Differentiate between DEVICE_STATE_CYCLE_JOIN and DEVICE_STATE_CYCLE_RUN
-            ///       Debug mode: Send every 30s, release mode: 30min
-            case DEVICE_STATE_CYCLE:
+            case DEVICE_STATE_CYCLE_JOIN:
             {
                 DeviceState = DEVICE_STATE_SLEEP;
 
-                TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
+                TxDutyCycleTime = APP_TX_DUTYCYCLE_JOIN + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
 
                 // Schedule next packet transmission
                 TimerSetValue( &TxNextPacketTimer, TxDutyCycleTime );
                 TimerStart( &TxNextPacketTimer );
                 break;
             }
+            case DEVICE_STATE_CYCLE_RUN:
+            {
+                DeviceState = DEVICE_STATE_SLEEP;
+
+                TxDutyCycleTime = APP_TX_DUTYCYCLE_RUN + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
+
+                // Schedule next packet transmission
+                TimerSetValue( &TxNextPacketTimer, TxDutyCycleTime );
+                TimerStart( &TxNextPacketTimer );
+                break;
+            }
+
             case DEVICE_STATE_SLEEP:
             {
                 if( NvmCtxMgmtStore( ) == NVMCTXMGMT_STATUS_SUCCESS )
