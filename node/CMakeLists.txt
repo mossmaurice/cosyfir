@@ -1,5 +1,13 @@
+# @todo diff
 cmake_minimum_required(VERSION 3.13)
 project (cosyfir-node VERSION 0.1.0)
+
+option(FIELD_SENSOR "Create cosyfir-node, which can publish sensor uplink messages" ON)
+option(IRRIGATION_ACTUATOR "Create cosyfir-node, which can subscribe to irrigation downlink messages" OFF)
+
+if (${FIELD_SENSOR} AND ${IRRIGATION_ACTUATOR})
+    message(FATAL_ERROR "Either enable FIELD_SENSOR or IRRIGATION_ACTUATOR!")
+endif()
 
 # Configure stm32l072xx-specific things
 set(BOARD LSN50)
@@ -19,7 +27,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/mac)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/peripherals)
 
 # Add custom app
-add_executable(cosyfir-node main.c #main.cpp
+add_executable(cosyfir-node main.c
                             LoRaMac-node/src/apps/LoRaMac/common/NvmCtxMgmt.c
                             $<TARGET_OBJECTS:mac>
                             $<TARGET_OBJECTS:system>
@@ -42,19 +50,6 @@ target_include_directories(cosyfir-node PUBLIC
     $<BUILD_INTERFACE:$<TARGET_PROPERTY:LSN50,INTERFACE_INCLUDE_DIRECTORIES>>
 )
 
-# necessary as _exit() is undefined
-#target_link_libraries(cosyfir-node PRIVATE -specs=nosys.specs)
-
 target_link_libraries(cosyfir-node PRIVATE m)
 
 create_hex_output(cosyfir-node)
-
-## Set CMake compiler
-#set(CMAKE_CXX_COMPILER      arm-none-eabi-g++)
-#set(CMAKE_C_COMPILER        arm-none-eabi-gcc)
-#set(CMAKE_ASM_COMPILER      arm-none-eabi-as)
-#
-#
-#target_compile_options(cosyfir-node PRIVATE -mcpu=cortex-m0)
-#
-#-nostartfiles -ffreestanding -specs=nano.specs -fno-exceptions

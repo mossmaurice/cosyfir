@@ -22,10 +22,10 @@ cmake $DEBUG ..
 make -j8
 cd $WORKSPACE
 
-echo "~~~~~ Start building CoSyfIr sensor node ~~~~~"
+echo "~~~~~ Start building CoSyfIr field sensor node ~~~~~"
 cd node
 mkdir -p build
 cd build
-cmake $DEBUG -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" ..
+cmake $DEBUG -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" -DFIELD_SENSOR=ON ..
 make -j8
 cd $WORKSPACE
