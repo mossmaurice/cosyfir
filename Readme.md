@@ -44,7 +44,7 @@ This section describes the sensor node software which communicates based on [LoR
   * Battery
   * IP66 case
 * DS18B20 temperature sensor
-* Watermark soil moistore sensor (Model 200SS)
+* Watermark soil moistore sensor (Model 200SS) (I bought it [here](https://www.mmm-tech.de/de/watermark/wms))
 * FTDI UART cable
 * UNIX machine
   * [stm32flash](https://sourceforge.net/p/stm32flash/wiki/Home/) version  >=0.5
@@ -127,14 +127,15 @@ Set the switch from FLASH mode to ISP mode and then do:
 Connect the sensors:
 
     # DS128B20
-    GND: JP3 Pin2 GND
-    DQ:  JP3 Pin6 PB3 (4k7 Ohm)
-    VDD: JP3 Pin2 VDD
+    GND (blue):   JP3 Pin2 GND
+    DQ  (yellow): JP3 Pin4 PA9 (Half-duplex single-wire using only TX)
+    VDD (red):    JP3 Pin1 VDD
 
     # Watermark 200SS
     JP3 Pin12 PA0
-    JP3 Pin5  PB4
-    # 10k resistor between PA0 and VDD and toggle PB4? Better PWM with timer
+    JP3 Pin5  PA4
+    # 10k resistor between PA4 and PA1
+    # alternating current flow after each reading
 
 [More information](https://www.irrometer.com/200ss.html) about the Watermark sensor.
 
@@ -151,6 +152,7 @@ Example message payload in hex:
            Temperature
                      ^
                      Soil water tension
+                     (tbd)
 
 ## Development
 
@@ -207,8 +209,7 @@ To do a warm restart, jump to the start of the flash:
 
 ## Todo
 
-* Add CMake flag for support of different nodes (e.g. sensor or actor)
-  * Split main.c into common and specific part (sensor or actor)
+* Split node/main.c into common and specific part (sensor or actor)
 * Check errata and choose low-power mode
   * https://www.digikey.com/eewiki/display/microcontroller/Low-Power+Modes+on+the+STM32L0+Series
-* Split up node/main.c
+* Add support for Watermark 200ss

@@ -1,7 +1,7 @@
 /*!
  * \file      main.c
  *
- * \brief     LoRaMac classA device implementation
+ * \brief     cosyfir-node based on LoRaMac classA device implementation
  *
  * \copyright Revised BSD License, see section \ref LICENSE.
  *
@@ -26,7 +26,11 @@
 #include <stdio.h>
 #include "utilities.h"
 #include "board.h"
+#include "adc-board.h"
+#include "board-config.h"
+#include "uart.h"
 #include "gpio.h"
+#include "delay.h"
 #include "LoRaMac.h"
 #include "Commissioning.h"
 #include "LoRaMac-node/src/apps/LoRaMac/common/NvmCtxMgmt.h"
@@ -41,9 +45,17 @@
 #define ADC_1                 PA_0
 #define ADC_2                 PA_1
 #define ADC_3                 PA_4
-#define DS128B20_1            PB_3
-#define DS128B20_2            PA_9
-#define DS128B20_3            PA_10
+
+#ifdef FIELD_SENSOR
+Adc_t AdcWatermark;
+Uart_t Uart1;
+#endif
+/// @todo remove
+// #define UART1_FIFO_TX_SIZE 1024
+// #define UART1_FIFO_RX_SIZE 1024
+// uint8_t Uart1TxBuffer[UART1_FIFO_TX_SIZE];
+// uint8_t Uart1RxBuffer[UART1_FIFO_RX_SIZE];
+
 
 /*!
  * Defines the application data transmission duty cycle. value in [ms].
@@ -234,6 +246,156 @@ const char* EventInfoStatusStrings[] =
     "Beacon not found"               // LORAMAC_EVENT_INFO_STATUS_BEACON_NOT_FOUND
 };
 
+#ifdef FIELD_SENSOR
+
+/*!
+ * Temperature measured via DS18B20
+ *
+ * \remark Resolution is 0.0625 degree celcius (default)
+ */
+static uint16_t LastMeasuredTemperature = 0;
+
+void SetupUartForDs18b20( void )
+{
+    UartSingleWireInit( &Uart1, UART_1, UART1_TX, UART1_RX );
+
+    // Init for first phase: reset and presence pulse
+    UartSingleWireConfig( &Uart1, RX_TX, 9600, UART_8_BIT, UART_1_STOP_BIT, NO_PARITY, NO_FLOW_CTRL );
+}
+
+bool Ds18b20SendByte( const uint8_t sendByte, uint8_t* const readByte )
+{
+    uint8_t txBuffer[7];
+    uint8_t rxBuffer[7];
+
+    // Send single byte for each bit
+    for( int i = 0; i < 8; i++ )
+    {
+        if( sendByte & (1 << i) )
+        {
+            txBuffer[i] = 0xFF;
+        }
+        else
+        {
+            txBuffer[i] = 0x00;
+        }
+    }
+
+    if( !UartSingleWireTxRx(txBuffer, rxBuffer, 8) )
+    {
+        return false;
+    }
+
+    if(readByte != NULL)
+    {
+        uint8_t answer = 0;
+
+        for( int i = 0; i < 8; i++)
+        {
+            if(rxBuffer[i] == 0xFF)
+            {
+                answer |= 0x01 << i;
+            }
+        }
+        *readByte = answer;
+    }
+
+    return true;
+}
+
+bool Ds18b20ReadByte( uint8_t* byte )
+{
+    // To read over single wire, send 1's and see what ds18b20 transmits
+    return Ds18b20SendByte( 0xFF, byte );
+}
+
+bool Ds18b20SendSkipRom( void )
+{
+    // Send command which will skip specific selection of device
+    // if multiple DS18B20 are connected
+    return Ds18b20SendByte( 0xCC, NULL );
+}
+
+bool Ds18b20StartTempConversion( void )
+{
+    return Ds18b20SendByte( 0x44, NULL );
+}
+
+bool Ds18b20ReadScratchpad( void )
+{
+    return Ds18b20SendByte( 0xBE, NULL );
+}
+
+bool Ds18b20Reset( void )
+{
+    // Send reset and presence pulse
+    UartSingleWireConfig( &Uart1, RX_TX, 9600, UART_8_BIT, UART_1_STOP_BIT, NO_PARITY, NO_FLOW_CTRL );
+
+    uint8_t answer = 0;
+    uint8_t resetRequest = 0xF0;
+
+    if( !UartSingleWireTxRx( &resetRequest, &answer, 1 ) )
+    {
+        return false;
+    }
+
+    if( answer == 0xF0 )
+    {
+        // Reset didn't work
+        return false;
+    }
+
+    // Init for transmission phase, read and write slots
+    UartSingleWireConfig( &Uart1, RX_TX, 115200, UART_8_BIT, UART_1_STOP_BIT, NO_PARITY, NO_FLOW_CTRL );
+
+    return true;
+}
+
+bool Ds18b20ReadTemperature( void )
+{
+    // Start the temperature conversion
+    if( !Ds18b20Reset() )
+    {
+        return false;
+    }
+    Ds18b20SendSkipRom();
+    Ds18b20StartTempConversion();
+
+    DelayMs( 750 );
+
+    // Read the measured temperature from the sensor
+    if( !Ds18b20Reset() )
+    {
+        return false;
+    }
+    Ds18b20SendSkipRom();
+    Ds18b20ReadScratchpad();
+
+    uint8_t lsb, msb;
+    if( !Ds18b20ReadByte( &lsb ) || !Ds18b20ReadByte( &msb ) )
+    {
+        // Reading the temperature failed
+        return false;
+    }
+
+    LastMeasuredTemperature = (msb << 0x08)  | lsb;
+
+    return true;
+}
+
+uint16_t Ds18b20GetLastTemperature( void )
+{
+    return LastMeasuredTemperature;
+}
+
+void BoardInitFieldSensor( void )
+{
+    /// @todo fix second param ADC_CHANNEL_1
+    AdcInit(&AdcWatermark, NC);
+    SetupUartForDs18b20();
+}
+#endif
+
 /*!
  * Prints the provided buffer in HEX
  *
@@ -297,9 +459,21 @@ static void PrepareTxFrame( uint8_t port )
     {
     case 2:
         {
-            AppDataSize = 1;
+#ifdef FIELD_SENSOR
+            if ( !Ds18b20ReadTemperature() )
+            {
+                printf("Could not read temperature\n");
+                LastMeasuredTemperature = 0;
+            }
+#endif
+
+            AppDataSize = 3;
             AppDataBuffer[0] = BoardGetBatteryLevel( );
-            /// @todo Read ds18b20 and watermark values here
+#ifdef FIELD_SENSOR
+            AppDataBuffer[1] = Ds18b20GetLastTemperature( ) >> 8;
+            AppDataBuffer[2] = Ds18b20GetLastTemperature( ) & 0xFF;
+#endif
+            /// @todo Read watermark values here
         }
         break;
     default:
@@ -688,6 +862,12 @@ int main( void )
     BoardInitMcu();
 
     BoardInitPeriph( );
+
+#ifdef FIELD_SENSOR
+    BoardInitFieldSensor();
+#elif IRRIGATION_ACTUATOR
+    BoardInitIrrigationActuator();
+#endif
 
     macPrimitives.MacMcpsConfirm = McpsConfirm;
     macPrimitives.MacMcpsIndication = McpsIndication;

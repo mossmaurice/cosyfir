@@ -9,6 +9,13 @@ if (${FIELD_SENSOR} AND ${IRRIGATION_ACTUATOR})
     message(FATAL_ERROR "Either enable FIELD_SENSOR or IRRIGATION_ACTUATOR!")
 endif()
 
+# @todo Replace with separate translation units
+if(${FIELD_SENSOR})
+    add_definitions(-DFIELD_SENSOR)
+elseif(${IRRIGATION_ACTUATOR})
+    add_definitions(-DIRRIGATION_ACTUATOR)
+endif()
+
 # Configure stm32l072xx-specific things
 set(BOARD LSN50)
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/LoRaMac-node/src/boards/LSN50/cmsis/arm-gcc/stm32l072xx_flash.ld)
