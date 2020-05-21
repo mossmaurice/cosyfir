@@ -50,12 +50,6 @@
 Adc_t AdcWatermark;
 Uart_t Uart1;
 #endif
-/// @todo remove
-// #define UART1_FIFO_TX_SIZE 1024
-// #define UART1_FIFO_RX_SIZE 1024
-// uint8_t Uart1TxBuffer[UART1_FIFO_TX_SIZE];
-// uint8_t Uart1RxBuffer[UART1_FIFO_RX_SIZE];
-
 
 /*!
  * Defines the application data transmission duty cycle. value in [ms].
