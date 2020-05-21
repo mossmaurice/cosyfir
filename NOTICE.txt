@@ -1,0 +1,29 @@
+This project has the following dependencies:
+
+1. Node software
+
+1.2 LoRaMac-node
+  - URL: https://github.com/Lora-net/LoRaMac-node
+  - License: Revised BSD License - https://github.com/Lora-net/LoRaMac-node/blob/develop/LICENSE.txt
+
+2. Server software
+
+2.1 ncurses
+  - URL: https://invisible-island.net/ncurses/
+  - License: X11 License - https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.2.tar.gz
+
+2.2 mosquittopp
+  - URL: https://github.com/eclipse/mosquitto
+  - License: Eclipse Public License - https://github.com/eclipse/mosquitto/blob/master/LICENSE.txt
+
+2.3 yaml-cpp
+  - URL: https://github.com/jbeder/yaml-cpp/
+  - License: MIT License - https://github.com/jbeder/yaml-cpp/blob/master/LICENSE
+
+2.4 jsoncpp
+  - URL: https://github.com/open-source-parsers/jsoncpp
+  - License: MIT License - https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE
+
+2.5 b64
+  - URL: http://libb64.sourceforge.net/
+  - License: Public Domain - https://sourceforge.net/projects/libb64/files/libb64/libb64/
