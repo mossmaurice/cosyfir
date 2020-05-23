@@ -137,9 +137,10 @@ Connect the sensors:
 
 [More information](https://www.irrometer.com/200ss.html) about the Watermark sensor.
 
-Check your local [TTN coverage](https://ttnmapper.org/) and make sure a gateway is nearby. Start `./cosyfird` and
-power on the LSN50 with the boot switch set to FLASH. After a few moments you should see messages arrive. In debug
-mode, messages are sent every 30 seconds. In release mode every half an hour.
+Check your local [TTN coverage](https://ttnmapper.org/) and make sure a gateway is nearby. Start
+`./cosyfird --config-file /path/to/cosyfird.yaml` and power on the LSN50 with the boot switch set to FLASH.
+After a few moments you should see messages arrive. In debug mode, messages are sent every 30 seconds.
+In release mode every half an hour.
 
 Example message payload in hex:
 
@@ -207,7 +208,11 @@ To do a warm restart, jump to the start of the flash:
 
 ## Todo
 
-* Split node/main.c into common and specific part (sensor or actor)
-* Check errata and choose low-power mode
-  * https://www.digikey.com/eewiki/display/microcontroller/Low-Power+Modes+on+the+STM32L0+Series
-* Add support for Watermark 200ss
+* Node
+  * Split node/main.c into common and specific part (sensor or actor)
+  * Check errata and choose low-power mode
+    * https://www.digikey.com/eewiki/display/microcontroller/Low-Power+Modes+on+the+STM32L0+Series
+  * Add support for Watermark 200ss
+* Server
+  * Add MQTT-2-iceoryx gateway
+  * Add controller tui app
