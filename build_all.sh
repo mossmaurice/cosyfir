@@ -19,27 +19,29 @@ WORKSPACE=$(git rev-parse --show-toplevel)
 # Possible build arguments are "clean", "debug"
 BUILD_ARGS=${1}
 
-if [ $BUILD_ARGS = "clean" ]
+BUILD_TYPE="-DCMAKE_BUILD_TYPE=Release"
+
+if [ "$BUILD_ARGS" = "clean" ]
 then
     rm -rf node/build
     rm -rf server/build
-elif [ $BUILD_ARGS = "debug" ]
+elif [ "$BUILD_ARGS" = "debug" ]
 then
-    DEBUG="-DCMAKE_BUILD_TYPE=Debug"
+    BUILD_TYPE="-DCMAKE_BUILD_TYPE=Debug"
 fi
 
-echo "~~~~~ Start building CoSyfIr daemon ~~~~~"
+echo "~~~~~ Starting to build CoSyfIr daemon ~~~~~"
 cd server
 mkdir -p build
 cd build
-cmake $DEBUG ..
+cmake $BUILD_TYPE ..
 make -j8
 cd $WORKSPACE
 
-echo "~~~~~ Start building CoSyfIr field sensor node ~~~~~"
+echo "~~~~~ Starting to build CoSyfIr field sensor node ~~~~~"
 cd node
 mkdir -p build
 cd build
-cmake $DEBUG -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" -DFIELD_SENSOR=ON ..
+cmake $BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" -DFIELD_SENSOR=ON ..
 make -j8
 cd $WORKSPACE

@@ -54,7 +54,7 @@ Uart_t Uart1;
 /*!
  * Defines the application data transmission duty cycle. value in [ms].
  */
-#if !defined(NDEBUG)
+#ifdef DEBUG
 #define APP_TX_DUTYCYCLE_RUN                        30000
 #else
 #define APP_TX_DUTYCYCLE_RUN                        1800000
@@ -259,8 +259,8 @@ void SetupUartForDs18b20( void )
 
 bool Ds18b20SendByte( const uint8_t sendByte, uint8_t* const readByte )
 {
-    uint8_t txBuffer[7];
-    uint8_t rxBuffer[7];
+    uint8_t txBuffer[8];
+    uint8_t rxBuffer[8];
 
     // Send single byte for each bit
     for( int i = 0; i < 8; i++ )
