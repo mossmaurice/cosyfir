@@ -30,7 +30,7 @@ then
     BUILD_TYPE="-DCMAKE_BUILD_TYPE=Debug"
 fi
 
-echo "~~~~~ Starting to build CoSyfIr daemon ~~~~~"
+echo "~~~~~ Starting to build CoSy fIr daemon ~~~~~"
 cd server
 mkdir -p build
 cd build
@@ -38,10 +38,12 @@ cmake $BUILD_TYPE ..
 make -j8
 cd $WORKSPACE
 
-echo "~~~~~ Starting to build CoSyfIr field sensor node ~~~~~"
+echo "~~~~~ Starting to build CoSy fIr node ~~~~~"
 cd node
 mkdir -p build
 cd build
-cmake $BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" -DFIELD_SENSOR=ON ..
-make -j8
+cmake $BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" -DSENSOR_NODE=ON -DACTUATOR_NODE=OFF ..
+make -j8 sensor-node sensor-node.hex
+cmake $BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE="LoRaMac-node/cmake/toolchain-arm-none-eabi.cmake" -DACTUATOR_NODE=ON -DSENSOR_NODE=OFF ..
+make -j8 actuator-node actuator-node.hex
 cd $WORKSPACE

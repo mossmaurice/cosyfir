@@ -90,7 +90,7 @@ The activation method will always be over-the-air-activation (OTAA). The file is
 
 Fill the preprocessor defines into `node/Commissioning_template.h` as described in the table. Then rename the file:
 
-    mv node/Commissioning_template.h node/Commissioning.h
+    mv node/common/Commissioning_template.h node/common/Commissioning.h
 
 ### Start the build
 
@@ -119,7 +119,7 @@ Find out where your USB serial device is mounted:
 
 Set the switch from FLASH mode to ISP mode and then do:
 
-    sudo stm32flash -w node/build/cosyfir-node.hex /dev/ttyUSBx
+    sudo stm32flash -w node/build/sensor-node.hex /dev/ttyUSBx
 
 ## Get cosyfir running
 
@@ -190,7 +190,7 @@ You can flash and debug your code with:
     st-util -p 1234
     (gdb-multiarch) set arch arm
     (gdb-multiarch) target extended-remote localhost:1234
-    (gdb-multiarch) load cosyfir-node
+    (gdb-multiarch) load sensor-node
 
 To be able to jump back to user code, set the boot switch back to FLASH. Then you can set breakpoints and run the code
 as usual:
@@ -200,19 +200,23 @@ as usual:
 
 Just loading the symbols without flashing is possible:
 
-    (gdb-multiarch) file cosyfir-node
+    (gdb-multiarch) file sensor-node
 
 To do a warm restart, jump to the start of the flash:
 
     (gdb-multiarch) jump *0x08000000
 
+To be able to see the printf's connect an FTDI on the same PINs as for flashing via bootloader/ISP boot mode and run:
+
+    screen /dev/ttyUSB3 38400
+
 ## Todo
 
 * Node
-  * Split node/main.c into common and specific part (sensor or actor)
   * Check errata and choose low-power mode
     * https://www.digikey.com/eewiki/display/microcontroller/Low-Power+Modes+on+the+STM32L0+Series
   * Add support for Watermark 200ss
+  * Rewrite in C++
 * Server
   * Add MQTT-2-iceoryx gateway
   * Add controller tui app
