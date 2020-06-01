@@ -1,4 +1,4 @@
-# ![cosyfir logo](/doc/cosyfir-logo-small.jpg) **CO**ntrol **SY**stem **F**or **IR**igation
+# ![cosyfir logo](/doc/cosyfir-logo-small.jpg) **CO**ntrol **SY**stem **F**or **IR**rigation
 
 > **_Disclaimer:_** This is a personal project and not affiliated with my employer
 
