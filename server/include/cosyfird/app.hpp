@@ -12,23 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "cosyfird/app.hpp"
+#pragma once
 
-using namespace csf;
+#include "tui/app.hpp"
 
-int main(int argc, char* argv[]) try
+namespace csf
 {
-    // Create container class for TUI
-    daemon::App cosyfirdApp;
-
-    cosyfirdApp.handleArgs(argc, argv);
-
-    // Start the application by calling the function
-    // call operator which will call our run()
-    return cosyfirdApp();
-}
-catch (const NCursesException& exception)
+namespace daemon
 {
-    std::cerr << "Problem with NCurses occured: " << exception.message
-              << " Errno: " << exception.errorno << std::endl;
-}
+
+class App : public tui::App
+{
+  public:
+    App() = default;
+
+    void handleArgs(int argc, char* argv[]) override;
+
+  private:
+    void title() override;
+    int run() override;
+    std::string defaultConfigPath{"/etc/cosyfir/cosyfird.yaml"};
+};
+} // namespace daemon
+} // namespace csf

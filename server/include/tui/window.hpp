@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include "tui/tuiapp.hpp"
+#include "tui/app.hpp"
 
-#include "cursesw.h"
+#include <cursesw.h>
 
 namespace csf
 {

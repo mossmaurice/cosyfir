@@ -14,8 +14,8 @@
 
 #pragma once
 
+#include <atomic>
 #include <cursesapp.h>
-#include <thread>
 namespace csf
 {
 namespace tui
@@ -39,15 +39,13 @@ class App : public NCursesApplication
     App& operator=(const App&) = delete;
     App& operator=(App&&) = delete;
 
-    void handleArgs(int argc, char* argv[]) override;
+  protected:
+    std::atomic_bool m_running{true};
+    void printTitle(std::string appName);
 
   private:
     int titlesize() const override;
-    void title() override;
-    int run() override;
     void init(bool enableColors) override;
-    bool m_running{true};
-    std::string defaultConfigPath{"/etc/cosyfir/cosyfird.yaml"};
 };
 } // namespace tui
 } // namespace csf

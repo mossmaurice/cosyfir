@@ -25,13 +25,28 @@ string(TIMESTAMP NOW "%Y-%m-%d %H:%M:%S")
 
 configure_file(../common/version.h.in ${CMAKE_BINARY_DIR}/generated/version.h)
 
-add_executable(cosyfird source/cosyfird/main.cpp
-                        source/cosyfird/configparser.cpp
-                        source/network/mqttclient.cpp
-                        source/tui/tuiapp.cpp
-                        source/tui/window.cpp
-                        source/tui/stream.cpp
-                        source/tui/status_stream.cpp
-                        source/tui/message_stream.cpp)
+add_library(tui
+    source/tui/app.cpp
+    source/tui/window.cpp
+    source/tui/stream.cpp
+    source/tui/status_stream.cpp
+    source/tui/message_stream.cpp
+)
 
-target_link_libraries(cosyfird ${CURSES_LIBRARIES} ncurses++ mosquittopp yaml-cpp jsoncpp b64 pthread)
+add_executable(cosyfird
+    source/cosyfird/main.cpp
+    source/cosyfird/app.cpp
+    source/cosyfird/configparser.cpp
+    source/network/mqttclient.cpp
+)
+
+target_link_libraries(cosyfird
+    tui
+    ${CURSES_LIBRARIES}
+    ncurses++
+    mosquittopp
+    yaml-cpp
+    jsoncpp
+    b64
+    pthread
+)
