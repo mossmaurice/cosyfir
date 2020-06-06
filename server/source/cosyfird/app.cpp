@@ -115,27 +115,12 @@ int App::run()
         // Read config file
         ConfigParser mqttSettings{statusWindow, defaultConfigPath};
 
-        // Establish connecting to TTN server
+        // Establish connection to TTN server and start the network thread
         network::MqttClient client{mqttSettings.getMqttConfig(),
                                    statusWindow,
                                    messageWindow,
-                                   payloadWindow};
-
-        auto networkLoop = [&]() {
-            while (m_running)
-            {
-                if (client.loop() != MOSQ_ERR_SUCCESS)
-                {
-                    statusWindow.printLine()
-                        << "Network problem, please restart";
-                    /// @todo try reconneting, don't throw
-                    throw;
-                }
-                std::this_thread::sleep_for(100ms);
-            }
-        };
-
-        std::thread networkThread{networkLoop};
+                                   payloadWindow,
+                                   m_running};
 
         while (m_running)
         {
@@ -144,6 +129,8 @@ int App::run()
             case 'q':
                 statusWindow.printLine() << "Stopping gracefully..";
                 m_running = false;
+                client.disconnect();
+                client.loop_stop();
                 break;
             case 's':
                 statusWindow.printLine()
@@ -152,21 +139,24 @@ int App::run()
                 // client.publish();
                 break;
             default:
-                statusWindow.printLine() << "Warning: Unkown key pressed";
                 break;
             }
+            std::this_thread::sleep_for(100ms);
         }
 
-        if (networkThread.joinable())
+        // Handle possible exception of client's network thread
+        if (client.getExceptionPointer())
         {
-            networkThread.join();
+            std::rethrow_exception(client.getExceptionPointer());
         }
 
-        std::this_thread::sleep_for(3s);
+        std::this_thread::sleep_for(1s);
         return EXIT_SUCCESS;
     }
     catch (const std::exception& exception)
     {
+        statusWindow.printLine()
+            << "Caught exception: '" << exception.what() << "'";
         statusWindow.printLine() << "Press 'q' to exit";
         statusWindow.waitForExit();
         return EXIT_FAILURE;

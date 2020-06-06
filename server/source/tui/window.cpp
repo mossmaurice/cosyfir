@@ -16,6 +16,8 @@
 #include "tui/message_stream.hpp"
 #include "tui/status_stream.hpp"
 
+#include <thread>
+
 namespace csf
 {
 namespace tui
@@ -37,6 +39,9 @@ Window::Window(const std::string title,
     // Refresh automatically
     m_subWindow.immedok(true);
     m_parentWindow.immedok(true);
+
+    // Return immediately from getch() call
+    m_subWindow.nodelay(true);
 
     // Allow scrolling
     m_subWindow.scrollok(true);
@@ -96,8 +101,11 @@ void Window::showString(std::string& string)
 
 void Window::waitForExit()
 {
+    using namespace std::chrono_literals;
+
     while (m_subWindow.getch() != 'q')
     {
+        std::this_thread::sleep_for(100ms);
     }
 }
 

@@ -29,13 +29,15 @@ namespace csf
 struct MqttConfig;
 namespace network
 {
+
 class MqttClient : public mosqpp::mosquittopp
 {
   public:
     MqttClient(const MqttConfig& mqttConfig,
                tui::Window& statusWindow,
                tui::Window& messageWindow,
-               tui::Window& payloadWindow);
+               tui::Window& payloadWindow,
+               std::atomic_bool& appRunStatus);
 
     virtual ~MqttClient();
 
@@ -44,7 +46,15 @@ class MqttClient : public mosqpp::mosquittopp
     MqttClient& operator=(const MqttClient&) = delete;
     MqttClient& operator=(MqttClient&&) = delete;
 
+    /// @note Called from separate network thread after connect
+    void on_connect(int returnCode) override;
+    /// @note Called from separate network thread after a message was received
     void on_message(const struct mosquitto_message* message) override;
+
+    std::exception_ptr getExceptionPointer() const;
+
+  private:
+    void forwardExceptionToMainThread();
 
     tui::Window& m_statusWindow;
     tui::Window& m_messageWindow;
@@ -63,6 +73,11 @@ class MqttClient : public mosqpp::mosquittopp
                                         // received
 
     };
+    /// @brief Used to handle exceptions across threads
+    std::exception_ptr m_exceptionPointer{nullptr};
+
+    /// @brief Signals the main thread of the app to exit
+    std::atomic_bool& m_appRunStatus;
 };
 } // namespace network
 } // namespace csf
