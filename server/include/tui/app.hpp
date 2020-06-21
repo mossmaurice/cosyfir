@@ -42,6 +42,9 @@ class App : public NCursesApplication
   protected:
     std::atomic_bool m_running{true};
     void printTitle(std::string appName);
+    /// @brief Touch/refresh stdscr and title
+    void keepVisible();
+    NCursesWindow m_titleWindow{1, 21, 1, 57};
 
   private:
     int titlesize() const override;

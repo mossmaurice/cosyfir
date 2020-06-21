@@ -33,6 +33,9 @@ Window::Window(const std::string title,
     , m_subWindow(m_parentWindow, true)
     , m_title(title)
     , m_textPosition(textPosition)
+    , m_colorPair(colorPair)
+    , m_lines(lines)
+    , m_cols(cols)
 {
     using ColorPairType = std::underlying_type<ColorPair>::type;
 
@@ -55,13 +58,22 @@ Window::Window(const std::string title,
     m_parentWindow.bkgd(
         COLOR_PAIR(static_cast<ColorPairType>(ColorPair::BLACK_ON_WHITE)));
 
+    printTitle();
+
+    // Set text and background color
+    m_subWindow.color_set(static_cast<ColorPairType>(m_colorPair));
+}
+
+void Window::printTitle()
+{
+    using ColorPairType = std::underlying_type<ColorPair>::type;
+
     // Print title
     m_parentWindow.color_set(
         static_cast<ColorPairType>(ColorPair::BLACK_ON_YELLOW));
     m_parentWindow.addstr(0, 3, m_title.c_str());
-
-    // Set text and background color
-    m_subWindow.color_set(static_cast<ColorPairType>(colorPair));
+    m_parentWindow.color_set(
+        static_cast<ColorPairType>(ColorPair::BLACK_ON_WHITE));
 }
 
 StatusStream Window::printLine()
@@ -112,6 +124,18 @@ void Window::waitForExit()
 int Window::getKeyStroke()
 {
     return m_subWindow.getch();
+}
+
+void Window::keepVisible()
+{
+    m_parentWindow.wresize(m_lines, m_cols);
+    m_parentWindow.box();
+    printTitle();
+    m_parentWindow.touchwin();
+    m_parentWindow.refresh();
+    m_subWindow.wresize(m_lines - 2, m_cols - 2);
+    m_subWindow.touchwin();
+    m_subWindow.refresh();
 }
 
 } // namespace tui

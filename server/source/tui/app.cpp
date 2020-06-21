@@ -33,9 +33,8 @@ void App::printTitle(std::string appName)
 {
     using ColorPairType = std::underlying_type<ColorPair>::type;
 
-    titleWindow = new NCursesWindow(1, 21, 0, 57);
-    titleWindow->immedok(true);
-    titleWindow->color_set(
+    m_titleWindow.immedok(true);
+    m_titleWindow.color_set(
         static_cast<ColorPairType>(ColorPair::BLACK_ON_YELLOW));
 
     std::string title{" "};
@@ -43,7 +42,7 @@ void App::printTitle(std::string appName)
     title.append(" v");
     title.append(versionString);
     title.append(" ");
-    titleWindow->addstr(title.c_str());
+    m_titleWindow.addstr(title.c_str());
 }
 
 void App::init(bool enableColors)
@@ -66,10 +65,20 @@ void App::init(bool enableColors)
         init_pair(static_cast<ColorPairType>(ColorPair::WHITE_ON_GREEN),
                   COLOR_WHITE,
                   COLOR_GREEN);
+
+        bkgd(COLOR_PAIR(static_cast<ColorPairType>(ColorPair::WHITE_ON_BLACK)));
     }
 
     // Make cursor invisible
     curs_set(0);
+}
+
+void App::keepVisible()
+{
+    touchwin(stdscr);
+    wrefresh(stdscr);
+    m_titleWindow.touchwin();
+    m_titleWindow.refresh();
 }
 
 } // namespace tui

@@ -220,3 +220,4 @@ To be able to see the printf's connect an FTDI on the same PINs as for flashing 
 * Server
   * Add MQTT-2-iceoryx gateway
   * Add controller tui app
+* Create and install man page

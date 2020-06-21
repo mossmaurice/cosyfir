@@ -66,11 +66,19 @@ class Window
     /// @brief Returns user input
     int getKeyStroke();
 
+    /// @brief Resizes window to its original size and touches/refreshes it
+    /// @note Useful when terminal size changes during runtime
+    void keepVisible();
+
   private:
+    void printTitle();
     NCursesWindow m_parentWindow;
     NCursesWindow m_subWindow;
     std::string m_title;
     TextPosition m_textPosition;
+    ColorPair m_colorPair;
+    uint16_t m_lines;
+    uint16_t m_cols;
 };
 } // namespace tui
 } // namespace csf

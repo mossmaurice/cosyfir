@@ -92,23 +92,23 @@ int App::run()
         return EXIT_SUCCESS;
     }
 
-    // Create left window
-    tui::Window statusWindow{" Log ", 31, 62, 2, 5};
+    // Create left windows
+    tui::Window infoWindow{"", 4, 62, 3, 5};
+    infoWindow.display() << "q: Exit the program";
+
+    tui::Window statusWindow{" Log ", 30, 62, 8, 5};
 
     // Create window for LoRa payload
     tui::Window payloadWindow{" Last payload (hex) ",
                               4,
                               60,
-                              2,
+                              3,
                               70,
                               tui::TextPosition::CENTER,
                               tui::ColorPair::WHITE_ON_GREEN};
 
     // Create right window with full MQTT message
-    tui::Window messageWindow{" Last full MQTT message ", 30, 60, 7, 70};
-
-    tui::Window infoWindow{"", 4, 62, 33, 5};
-    infoWindow.display() << "q: Exit the program";
+    tui::Window messageWindow{" Last full MQTT message ", 30, 60, 8, 70};
 
     try
     {
@@ -137,6 +137,14 @@ int App::run()
                     << "Sending dummy downlink message to all nodes";
                 /// @todo
                 // client.publish();
+                break;
+            case KEY_RESIZE:
+                // Try to keep content visible with current terminal size
+                keepVisible();
+                messageWindow.keepVisible();
+                payloadWindow.keepVisible();
+                infoWindow.keepVisible();
+                statusWindow.keepVisible();
                 break;
             default:
                 break;
