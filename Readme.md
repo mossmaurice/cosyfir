@@ -125,7 +125,7 @@ Set the switch from FLASH mode to ISP mode and then do:
 
 Connect the sensors:
 
-    # DS128B20
+    # DS18B20
     GND (blue):   JP3 Pin2 GND
     DQ  (yellow): JP3 Pin4 PA9 (Half-duplex single-wire using only TX)
     VDD (red):    JP3 Pin1 VDD

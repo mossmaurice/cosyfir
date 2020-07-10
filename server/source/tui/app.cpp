@@ -65,8 +65,6 @@ void App::init(bool enableColors)
         init_pair(static_cast<ColorPairType>(ColorPair::WHITE_ON_GREEN),
                   COLOR_WHITE,
                   COLOR_GREEN);
-
-        bkgd(COLOR_PAIR(static_cast<ColorPairType>(ColorPair::WHITE_ON_BLACK)));
     }
 
     // Make cursor invisible

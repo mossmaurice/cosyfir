@@ -76,7 +76,6 @@ class Window
     NCursesWindow m_subWindow;
     std::string m_title;
     TextPosition m_textPosition;
-    ColorPair m_colorPair;
     uint16_t m_lines;
     uint16_t m_cols;
 };

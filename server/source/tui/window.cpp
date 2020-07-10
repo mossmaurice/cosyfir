@@ -33,7 +33,6 @@ Window::Window(const std::string title,
     , m_subWindow(m_parentWindow, true)
     , m_title(title)
     , m_textPosition(textPosition)
-    , m_colorPair(colorPair)
     , m_lines(lines)
     , m_cols(cols)
 {
@@ -61,7 +60,7 @@ Window::Window(const std::string title,
     printTitle();
 
     // Set text and background color
-    m_subWindow.color_set(static_cast<ColorPairType>(m_colorPair));
+    m_subWindow.color_set(static_cast<ColorPairType>(colorPair));
 }
 
 void Window::printTitle()
