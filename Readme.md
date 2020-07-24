@@ -209,15 +209,3 @@ To do a warm restart, jump to the start of the flash:
 To be able to see the printf's connect an FTDI on the same PINs as for flashing via bootloader/ISP boot mode and run:
 
     screen /dev/ttyUSB3 38400
-
-## Todo
-
-* Node
-  * Check errata and choose low-power mode
-    * https://www.digikey.com/eewiki/display/microcontroller/Low-Power+Modes+on+the+STM32L0+Series
-  * Add support for Watermark 200ss
-  * Rewrite in C++
-* Server
-  * Add MQTT-2-iceoryx gateway
-  * Add controller tui app
-* Create and install man page
